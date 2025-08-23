@@ -1,0 +1,15 @@
+# Certificate Generation App - Project Documentation
+
+## Project Overview
+
+### Ultimate Goal
+Create a simple web application that:
+1. **Frontend**: Web form with fields for Name, Surname, and Email + Submit button
+2. **Backend Processing**: When submitted:
+   - Generate a PDF certificate based on a template with Name, Surname, and current date
+   - Send the certificate via email to the provided address
+   - Store record in database for admin tracking
+3. **Admin Dashboard**: View all issued certificates over time
+4. **Hosting**: Deployed on Azure (employer's cloud provider)
+5. **Easy Duplication**: Colleagues can easily replicate this setup in their work environment
+

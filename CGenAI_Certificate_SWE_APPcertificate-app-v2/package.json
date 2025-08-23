@@ -1,0 +1,23 @@
+{
+  "name": "",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/functions/*.js",
+  "scripts": {
+    "start": "func start",
+    "test": "echo \"No tests yet...\""
+  },
+  "dependencies": {
+    "@azure/functions": "^4.0.0",
+    "node-cron": "^4.2.1",
+    "nodemailer": "^7.0.5",
+    "pdfkit": "^0.17.1",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/nodemailer": "^7.0.1",
+    "@types/pdfkit": "^0.17.2",
+    "@types/uuid": "^10.0.0",
+    "azure-functions-core-tools": "^4.x"
+  }
+}
