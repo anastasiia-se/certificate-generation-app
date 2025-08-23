@@ -30,7 +30,7 @@ az staticwebapp create \
   --location "East US 2" \
   --branch "main" \
   --app-location "/certificate-app-frontend" \
-  --api-location "/C:GenAI_Certificate_SWE_APPcertificate-app-v2" \
+  --api-location "/api" \
   --output-location "build" \
   --sku "Standard"
 ```

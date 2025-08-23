@@ -17,7 +17,7 @@ cd ..
 
 # Step 2: Build Azure Functions (if needed)
 echo "🔧 Preparing Azure Functions..."
-cd "C:GenAI_Certificate_SWE_APPcertificate-app-v2"
+cd api
 npm install
 cd ..
 
@@ -26,7 +26,7 @@ echo "📤 Deploying to Azure..."
 az staticwebapp deploy \
   --name $STATIC_WEB_APP_NAME \
   --app-location "./certificate-app-frontend/build" \
-  --api-location "./C:GenAI_Certificate_SWE_APPcertificate-app-v2" \
+  --api-location "./api" \
   --skip-api-build true
 
 echo "✅ Deployment complete!"

@@ -27,7 +27,7 @@ jobs:
           cache: 'npm'
           cache-dependency-path: |
             certificate-app-frontend/package-lock.json
-            C:GenAI_Certificate_SWE_APPcertificate-app-v2/package-lock.json
+            api/package-lock.json
 
       - name: Install and Build Frontend
         run: |
@@ -37,7 +37,7 @@ jobs:
 
       - name: Install API Dependencies
         run: |
-          cd "C:GenAI_Certificate_SWE_APPcertificate-app-v2"
+          cd api
           npm ci
 
       - name: Build And Deploy
@@ -48,7 +48,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           app_location: "/certificate-app-frontend"
-          api_location: "/C:GenAI_Certificate_SWE_APPcertificate-app-v2"
+          api_location: "/api"
           output_location: "build"
           app_build_command: "npm run build"
           api_build_command: "npm run build --if-present"
