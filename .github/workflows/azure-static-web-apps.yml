@@ -65,7 +65,6 @@ jobs:
         with:
           app-name: 'certificate-functions-app-77132'
           package: 'api'
-          resource-group-name: 'rg-certificate-app'
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
