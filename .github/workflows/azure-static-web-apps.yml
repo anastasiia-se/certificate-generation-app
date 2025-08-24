@@ -1,5 +1,4 @@
 name: Deploy Certificate App
-
 on:
   push:
     branches:
@@ -8,7 +7,6 @@ on:
     types: [opened, synchronize, reopened, closed]
     branches:
       - main
-
 jobs:
   # Deploy Static Web App (Frontend Only)
   deploy_static_web_app:
@@ -20,20 +18,17 @@ jobs:
         with:
           submodules: true
           lfs: false
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
           cache-dependency-path: certificate-app-frontend/package-lock.json
-
       - name: Install and Build Frontend
         run: |
           cd certificate-app-frontend
           npm ci
           npm run build
-
       - name: Deploy Static Web App
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
@@ -44,7 +39,6 @@ jobs:
           app_location: "/certificate-app-frontend"
           output_location: "build"
           skip_api_build: true
-
   # Deploy Azure Functions (API)
   deploy_azure_functions:
     if: github.event_name == 'push'
@@ -52,30 +46,26 @@ jobs:
     name: Deploy Azure Functions
     steps:
       - uses: actions/checkout@v3
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
           cache-dependency-path: api/package-lock.json
-
       - name: Install API Dependencies
         run: |
           cd api
           npm ci
-
       - name: Azure Login
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-
       - name: Deploy Azure Functions
         uses: Azure/functions-action@v1
         with:
           app-name: 'certificate-functions-app-77132'
           package: 'api'
-
+          resource-group-name: 'rg-certificate-app'
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
