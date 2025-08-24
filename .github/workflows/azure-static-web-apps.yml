@@ -73,7 +73,7 @@ jobs:
       - name: Deploy Azure Functions
         uses: Azure/functions-action@v1
         with:
-          app-name: 'certificate-app-functions'
+          app-name: 'certificate-functions-app-77132'
           package: 'api'
 
   close_pull_request_job:
