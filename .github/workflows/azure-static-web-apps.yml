@@ -55,7 +55,7 @@ jobs:
       - name: Install API Dependencies
         run: |
           cd api
-          npm ci
+          npm ci --production
       - name: Azure Login
         uses: azure/login@v1
         with:
