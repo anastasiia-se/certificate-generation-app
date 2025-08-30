@@ -39,3 +39,4 @@ function App() {
 }
 
 export default App;
+// Updated for Standard tier deployment
