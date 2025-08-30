@@ -29,9 +29,10 @@ const CertificateHistory: React.FC<CertificateHistoryProps> = ({ refreshTrigger 
     setLoading(true);
     try {
       const data = await certificateAPI.getCertificateHistory();
-      setCertificates(data);
+      setCertificates(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Failed to fetch certificate history:', error);
+      setCertificates([]);
     } finally {
       setLoading(false);
     }

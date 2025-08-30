@@ -1,8 +1,5 @@
 const { app } = require('@azure/functions');
-
-// Import the same certificate store (in production, this would be Cosmos DB)
-// For now, we'll simulate some data
-const certificateStore = [];
+const certificateStore = require('./shared/certificateStore');
 
 app.http('GetCertificateHistory', {
     methods: ['GET'],
@@ -10,9 +7,11 @@ app.http('GetCertificateHistory', {
     route: 'GetCertificateHistory',
     handler: async (request, context) => {
         try {
-            // In production, fetch from Cosmos DB
-            // For now, return mock data if store is empty
-            if (certificateStore.length === 0) {
+            // Get all certificates from shared store
+            const certificates = certificateStore.getAllCertificates();
+            
+            // If no certificates exist, return mock data for demo
+            if (certificates.length === 0) {
                 const mockData = [
                     {
                         certificateId: 'cert_demo_1',
@@ -45,16 +44,13 @@ app.http('GetCertificateHistory', {
                 };
             }
 
-            // Return actual stored certificates (sorted by sent date, newest first)
-            const sortedCertificates = certificateStore
-                .sort((a, b) => new Date(b.sentDate) - new Date(a.sentDate));
-
+            // Return actual stored certificates (already sorted by shared store)
             return {
                 status: 200,
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(sortedCertificates)
+                body: JSON.stringify(certificates)
             };
 
         } catch (error) {

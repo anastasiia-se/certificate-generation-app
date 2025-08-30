@@ -1,7 +1,5 @@
 const { app } = require('@azure/functions');
-
-// Simple in-memory storage (replace with Cosmos DB in production)
-const certificateStore = [];
+const certificateStore = require('./shared/certificateStore');
 
 app.http('GenerateCertificate', {
     methods: ['POST'],
@@ -44,7 +42,7 @@ app.http('GenerateCertificate', {
             };
 
             // Store in memory (replace with Cosmos DB)
-            certificateStore.push(certificateRecord);
+            certificateStore.addCertificate(certificateRecord);
 
             // TODO: Generate actual PDF certificate
             // TODO: Send emails using SendGrid

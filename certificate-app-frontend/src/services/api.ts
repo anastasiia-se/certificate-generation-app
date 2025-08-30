@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { CertificateData, CertificateResponse, CertificateRecord } from '../types/Certificate';
 
-const API_BASE_URL = '/api';
+const API_BASE_URL = 'https://certificate-functions-app-77132.azurewebsites.net/api';
 
 export const certificateAPI = {
   generateCertificate: async (data: CertificateData): Promise<CertificateResponse> => {
