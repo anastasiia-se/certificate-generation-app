@@ -1,5 +1,8 @@
 const { app } = require('@azure/functions');
 const certificateStore = require('./shared/certificateStore');
+const { generateCertificatePDF } = require('./shared/pdfGenerator');
+const fs = require('fs');
+const path = require('path');
 
 app.http('GenerateCertificate', {
     methods: ['POST'],
@@ -41,10 +44,29 @@ app.http('GenerateCertificate', {
                 certificatePath: `certificates/${certificateId}.pdf`
             };
 
+            // Generate PDF certificate
+            const pdfBuffer = await generateCertificatePDF({
+                name,
+                surname,
+                completionDate,
+                certificateId
+            });
+
+            // Store PDF in temporary file system (will be replaced with Azure Blob Storage)
+            const certificatesDir = path.join(__dirname, 'certificates');
+            if (!fs.existsSync(certificatesDir)) {
+                fs.mkdirSync(certificatesDir, { recursive: true });
+            }
+            
+            const pdfPath = path.join(certificatesDir, `${certificateId}.pdf`);
+            fs.writeFileSync(pdfPath, pdfBuffer);
+
+            // Update certificate record with actual storage info
+            certificateRecord.certificatePath = pdfPath;
+
             // Store in memory (replace with Cosmos DB)
             certificateStore.addCertificate(certificateRecord);
 
-            // TODO: Generate actual PDF certificate
             // TODO: Send emails using SendGrid
             
             context.log('Certificate generated:', certificateId);
@@ -58,7 +80,7 @@ app.http('GenerateCertificate', {
                     success: true,
                     message: 'Certificate generated successfully',
                     certificateId,
-                    certificateUrl: `https://example.com/certificates/${certificateId}.pdf`,
+                    certificateUrl: `https://certificate-functions-app-77132.azurewebsites.net/api/certificates/${certificateId}`,
                     emailSent: true
                 })
             };
