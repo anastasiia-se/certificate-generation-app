@@ -1,4 +1,13 @@
-const { Resend } = require('resend');
+// Try different import approaches for compatibility
+let Resend;
+try {
+    // Try named export first
+    const resendModule = require('resend');
+    Resend = resendModule.Resend || resendModule;
+} catch (error) {
+    console.error('Failed to load Resend module:', error);
+    Resend = null;
+}
 
 class EmailService {
     constructor() {
@@ -11,8 +20,24 @@ class EmailService {
             return;
         }
         
+        if (!Resend) {
+            console.error('Resend module not loaded properly');
+            this.isConfigured = false;
+            return;
+        }
+        
         try {
-            this.resend = new Resend(apiKey);
+            // Handle both class and function exports
+            if (typeof Resend === 'function') {
+                this.resend = new Resend(apiKey);
+            } else if (Resend.Resend) {
+                this.resend = new Resend.Resend(apiKey);
+            } else {
+                console.error('Unexpected Resend module structure');
+                this.isConfigured = false;
+                return;
+            }
+            
             this.fromEmail = process.env.SENDER_EMAIL || 'onboarding@resend.dev';
             this.isConfigured = true;
             console.log('Email service initialized with sender:', this.fromEmail);
