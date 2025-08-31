@@ -3,6 +3,8 @@ const { TableClient } = require('@azure/data-tables');
 class TableStorageService {
     constructor() {
         const connectionString = process.env.AZURE_STORAGE_CONNECTION_STRING;
+        console.log('Initializing Table Storage. Connection string present:', !!connectionString);
+        
         if (!connectionString) {
             console.warn('Azure Storage connection string not found. Using in-memory fallback.');
             this.isConfigured = false;
@@ -14,6 +16,7 @@ class TableStorageService {
             this.tableName = 'certificates';
             this.tableClient = TableClient.fromConnectionString(connectionString, this.tableName);
             this.isConfigured = true;
+            console.log('Table Storage client initialized successfully');
             this.initializeTable();
         } catch (error) {
             console.error('Failed to initialize Table Storage:', error);
@@ -40,8 +43,11 @@ class TableStorageService {
     }
 
     async addCertificate(certificateData) {
+        console.log('Adding certificate. Table Storage configured:', this.isConfigured);
+        
         if (!this.isConfigured) {
             // Fallback to in-memory storage
+            console.log('Using in-memory storage fallback');
             this.inMemoryStore.push(certificateData);
             return certificateData;
         }
@@ -62,12 +68,15 @@ class TableStorageService {
                 timestamp: new Date().toISOString()
             };
 
+            console.log('Attempting to save entity to Table Storage:', entity.rowKey);
             await this.tableClient.createEntity(entity);
-            console.log('Certificate saved to Table Storage:', certificateData.certificateId);
+            console.log('Certificate saved to Table Storage successfully:', certificateData.certificateId);
             return certificateData;
         } catch (error) {
-            console.error('Error saving certificate to Table Storage:', error);
+            console.error('Error saving certificate to Table Storage:', error.message || error);
+            console.error('Full error:', error);
             // Fallback to in-memory
+            console.log('Falling back to in-memory storage due to error');
             this.inMemoryStore.push(certificateData);
             return certificateData;
         }
