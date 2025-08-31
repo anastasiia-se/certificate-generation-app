@@ -96,7 +96,16 @@ const CertificateHistory: React.FC<CertificateHistoryProps> = ({ refreshTrigger 
             </TableRow>
           </TableHead>
           <TableBody>
-            {certificates.length === 0 ? (
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={7} align="center" sx={{ py: 4 }}>
+                  <CircularProgress size={30} />
+                  <Typography variant="body2" color="textSecondary" sx={{ mt: 2 }}>
+                    Loading certificates...
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            ) : certificates.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} align="center">
                   <Typography variant="body2" color="textSecondary">

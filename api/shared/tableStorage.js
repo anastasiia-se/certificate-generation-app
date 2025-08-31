@@ -33,11 +33,13 @@ class TableStorageService {
             await this.tableClient.createTable();
             console.log(`Table '${this.tableName}' is ready`);
         } catch (error) {
-            if (error.statusCode === 409) {
+            if (error.statusCode === 409 || error.code === 'TableAlreadyExists') {
                 // Table already exists
                 console.log(`Table '${this.tableName}' already exists`);
             } else {
                 console.error('Error creating table:', error);
+                // Don't disable the service just because table creation failed
+                // Table might already exist
             }
         }
     }
