@@ -1,5 +1,5 @@
 const { app } = require('@azure/functions');
-const certificateStore = require('./shared/certificateStore');
+const tableStorage = require('./shared/tableStorage');
 
 app.http('GetCertificateHistory', {
     methods: ['GET'],
@@ -7,44 +7,10 @@ app.http('GetCertificateHistory', {
     route: 'GetCertificateHistory',
     handler: async (request, context) => {
         try {
-            // Get all certificates from shared store
-            const certificates = certificateStore.getAllCertificates();
+            // Get all certificates from Table Storage
+            const certificates = await tableStorage.getAllCertificates();
             
-            // If no certificates exist, return mock data for demo
-            if (certificates.length === 0) {
-                const mockData = [
-                    {
-                        certificateId: 'cert_demo_1',
-                        name: 'John',
-                        surname: 'Doe',
-                        recipientEmail: 'john.doe@example.com',
-                        managerEmail: 'manager@example.com',
-                        completionDate: '2024-01-15',
-                        sentDate: '2024-01-15T10:30:00Z',
-                        emailSent: true
-                    },
-                    {
-                        certificateId: 'cert_demo_2', 
-                        name: 'Jane',
-                        surname: 'Smith',
-                        recipientEmail: 'jane.smith@example.com',
-                        managerEmail: 'manager@example.com',
-                        completionDate: '2024-01-10',
-                        sentDate: '2024-01-10T14:20:00Z',
-                        emailSent: true
-                    }
-                ];
-                
-                return {
-                    status: 200,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(mockData)
-                };
-            }
-
-            // Return actual stored certificates (already sorted by shared store)
+            // Return actual stored certificates (sorted by newest first)
             return {
                 status: 200,
                 headers: {

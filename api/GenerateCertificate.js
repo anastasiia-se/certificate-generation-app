@@ -1,5 +1,5 @@
 const { app } = require('@azure/functions');
-const certificateStore = require('./shared/certificateStore');
+const tableStorage = require('./shared/tableStorage');
 const { generateCertificatePDF } = require('./shared/pdfGenerator');
 const blobStorage = require('./shared/blobStorage');
 
@@ -64,8 +64,8 @@ app.http('GenerateCertificate', {
                 certificateRecord.certificatePath = null;
             }
 
-            // Store in memory (replace with Cosmos DB)
-            certificateStore.addCertificate(certificateRecord);
+            // Store in Azure Table Storage
+            await tableStorage.addCertificate(certificateRecord);
 
             // TODO: Send emails using SendGrid
             

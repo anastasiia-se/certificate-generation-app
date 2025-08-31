@@ -1,5 +1,5 @@
 const { app } = require('@azure/functions');
-const certificateStore = require('./shared/certificateStore');
+const tableStorage = require('./shared/tableStorage');
 const blobStorage = require('./shared/blobStorage');
 
 app.http('GetCertificate', {
@@ -10,8 +10,8 @@ app.http('GetCertificate', {
         try {
             const certificateId = request.params.certificateId;
             
-            // Find certificate in store
-            const certificate = certificateStore.getCertificateById(certificateId);
+            // Find certificate in Table Storage
+            const certificate = await tableStorage.getCertificateById(certificateId);
             
             if (!certificate) {
                 return {
