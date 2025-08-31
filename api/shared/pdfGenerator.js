@@ -27,27 +27,39 @@ function generateCertificatePDF(certificateData) {
             const orangeColor = '#FF6B35'; // Swedbank orange
             const darkText = '#2C2C2C';
             
-            // Try to add background image (oak leaves) on the right side
+            // Add oak leaves background - full height, positioned naturally across right side
             try {
                 const bgImagePath = path.join(__dirname, 'oak-leaves-bg.jpg');
                 if (fs.existsSync(bgImagePath)) {
-                    // Add background image on the right side with opacity effect
+                    // Add background image with full height, starting from center-right
                     doc.save();
-                    doc.rect(pageWidth * 0.65, 40, pageWidth * 0.35 - 50, pageHeight - 80)
+                    // Create clipping region for the right portion - wider area
+                    doc.rect(pageWidth * 0.4, 0, pageWidth * 0.6, pageHeight)
                        .clip();
-                    doc.image(bgImagePath, pageWidth * 0.65, 40, {
-                        width: pageWidth * 0.35,
-                        height: pageHeight - 80,
-                        fit: [pageWidth * 0.35, pageHeight - 80]
+                    
+                    // Position image to take full height, positioned more to the left for natural look
+                    doc.opacity(0.7)  // Reduced transparency for better visual impact
+                       .image(bgImagePath, pageWidth * 0.25, 0, {
+                        width: pageWidth * 0.75,  // Wider coverage
+                        height: pageHeight,
+                        cover: [pageWidth * 0.75, pageHeight]  // Cover to maintain aspect ratio
                     });
+                    doc.opacity(1);  // Reset opacity
                     doc.restore();
                 }
             } catch (imgError) {
                 console.log('Could not add background image:', imgError);
             }
             
-            // Draw double border frame
-            // Outer border
+            // Add white semi-transparent overlay on left side for better text readability
+            doc.save();
+            doc.rect(0, 0, pageWidth * 0.55, pageHeight)
+               .fill('white')
+               .opacity(0.92);  // Slightly more transparent to let some background show through
+            doc.restore();
+            
+            // Draw double border frame AFTER background
+            // Outer border with orange section on right
             doc.rect(30, 30, pageWidth - 60, pageHeight - 60)
                .lineWidth(3)
                .stroke(orangeColor);
@@ -57,118 +69,136 @@ function generateCertificatePDF(certificateData) {
                .lineWidth(1)
                .stroke(orangeColor);
             
-            // DIPLOMA title
+            // Add vertical orange accent line to separate text from image
+            doc.rect(pageWidth * 0.57, 30, 2, pageHeight - 60)
+               .fill(orangeColor);
+            
+            // DIPLOMA title - positioned in left content area
+            const contentWidth = pageWidth * 0.6;
+            const leftMargin = 50;
+            
             doc.font('Helvetica-Bold')
                .fontSize(48)
                .fillColor(darkText)
-               .text('DIPLOMA', 0, 100, { 
+               .text('DIPLOMA', leftMargin, 100, { 
                    align: 'center',
-                   width: pageWidth
+                   width: contentWidth
                });
             
             // Subtitle
             doc.font('Helvetica')
                .fontSize(18)
                .fillColor(darkText)
-               .text('for successful completion of', 0, 170, { 
+               .text('for successful completion of', leftMargin, 170, { 
                    align: 'center',
-                   width: pageWidth
+                   width: contentWidth
                });
             
-            // Program name
+            // Program name - adjusted for better fit
             doc.font('Helvetica-Bold')
-               .fontSize(32)
+               .fontSize(28)
                .fillColor(darkText)
-               .text('Gen AI Training for Technical Professionals', 0, 200, { 
+               .text('Gen AI Training for', leftMargin, 200, { 
                    align: 'center',
-                   width: pageWidth
+                   width: contentWidth
+               })
+               .text('Technical Professionals', leftMargin, 235, { 
+                   align: 'center',
+                   width: contentWidth
                });
             
-            // Description paragraph
+            // Description paragraph - in left content area
             doc.font('Helvetica')
-               .fontSize(14)
+               .fontSize(12)
                .fillColor(darkText)
-               .text('Completion of this program demonstrates technical expertise', 0, 260, {
+               .text('Completion of this program demonstrates technical', leftMargin, 275, {
                    align: 'center',
-                   width: pageWidth
+                   width: contentWidth
                })
-               .text('in developing Generative AI applications within highly', 0, 280, {
+               .text('expertise in developing Generative AI applications', leftMargin, 292, {
                    align: 'center',
-                   width: pageWidth
+                   width: contentWidth
                })
-               .text('regulated environments, adherence to best practices in the', 0, 300, {
+               .text('within highly regulated environments, adherence to', leftMargin, 309, {
                    align: 'center',
-                   width: pageWidth
+                   width: contentWidth
                })
-               .text('financial industry, and alignment with Swedbank\'s standards', 0, 320, {
+               .text('best practices in the financial industry, and alignment', leftMargin, 326, {
                    align: 'center',
-                   width: pageWidth
+                   width: contentWidth
                })
-               .text('and guidelines.', 0, 340, {
+               .text('with Swedbank\'s standards and guidelines.', leftMargin, 343, {
                    align: 'center',
-                   width: pageWidth
+                   width: contentWidth
                });
             
             // Certificate presented to
             doc.fontSize(16)
                .fillColor(darkText)
-               .text('This certificate is proudly presented to', 0, 380, {
+               .text('This certificate is proudly presented to', leftMargin, 380, {
                    align: 'center',
-                   width: pageWidth
+                   width: contentWidth
                });
             
             // Recipient name
             doc.font('Helvetica-Bold')
-               .fontSize(36)
+               .fontSize(32)
                .fillColor(darkText)
-               .text(`${name.toUpperCase()} ${surname.toUpperCase()}`, 0, 410, {
+               .text(`${name.toUpperCase()} ${surname.toUpperCase()}`, leftMargin, 410, {
                    align: 'center',
-                   width: pageWidth
+                   width: contentWidth
                });
             
-            // Date with decorative elements
+            // Date with decorative elements - in left content area
             const dateText = new Date(completionDate).toLocaleDateString('en-US', { 
                 year: 'numeric', 
                 month: 'long', 
                 day: 'numeric' 
             });
             
-            // Decorative swirls around date
-            doc.moveTo(250, 475)
-               .quadraticCurveTo(220, 470, 200, 475)
+            // Decorative swirls around date - positioned for left content area
+            const dateY = 465;
+            const centerX = leftMargin + contentWidth / 2;
+            
+            doc.moveTo(centerX - 80, dateY + 10)
+               .quadraticCurveTo(centerX - 50, dateY + 5, centerX - 20, dateY + 10)
                .stroke(orangeColor);
             
-            doc.moveTo(pageWidth - 250, 475)
-               .quadraticCurveTo(pageWidth - 220, 470, pageWidth - 200, 475)
+            doc.moveTo(centerX + 20, dateY + 10)
+               .quadraticCurveTo(centerX + 50, dateY + 5, centerX + 80, dateY + 10)
                .stroke(orangeColor);
             
             doc.font('Helvetica')
                .fontSize(16)
                .fillColor(darkText)
-               .text(dateText, 0, 465, {
+               .text(dateText, leftMargin, dateY, {
                    align: 'center',
-                   width: pageWidth
+                   width: contentWidth
                });
             
-            // Add Swedbank logo
+            // Add Swedbank logo - positioned in left portion
             try {
                 const logoPath = path.join(__dirname, 'swedbank-logo.png');
                 if (fs.existsSync(logoPath)) {
-                    // Add the actual Swedbank logo centered at bottom
-                    doc.image(logoPath, pageWidth / 2 - 100, 500, {
-                        width: 200,
-                        height: 50,
-                        fit: [200, 50],
-                        align: 'center'
+                    // Add the actual Swedbank logo in the text area (left side)
+                    // Position it in the center of the left content area
+                    const logoWidth = 180;
+                    const logoHeight = 45;
+                    const logoX = (pageWidth * 0.6 - logoWidth) / 2;  // Center in left content area
+                    
+                    doc.image(logoPath, logoX, 505, {
+                        width: logoWidth,
+                        height: logoHeight,
+                        fit: [logoWidth, logoHeight]
                     });
                 } else {
                     // Fallback to text if logo not found
                     doc.font('Helvetica-Bold')
                        .fontSize(24)
                        .fillColor(orangeColor)
-                       .text('Swedbank', 0, 510, {
+                       .text('Swedbank', 50, 510, {
                            align: 'center',
-                           width: pageWidth
+                           width: pageWidth * 0.6
                        });
                 }
             } catch (logoError) {
@@ -177,9 +207,9 @@ function generateCertificatePDF(certificateData) {
                 doc.font('Helvetica-Bold')
                    .fontSize(24)
                    .fillColor(orangeColor)
-                   .text('Swedbank', 0, 510, {
+                   .text('Swedbank', 50, 510, {
                        align: 'center',
-                       width: pageWidth
+                       width: pageWidth * 0.6
                    });
             }
             
