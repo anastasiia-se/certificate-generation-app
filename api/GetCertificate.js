@@ -30,16 +30,26 @@ app.http('GetCertificate', {
             let pdfBuffer;
             try {
                 pdfBuffer = await blobStorage.downloadPDF(certificateId);
+                
+                if (!pdfBuffer) {
+                    throw new Error('PDF buffer is empty');
+                }
             } catch (downloadError) {
                 context.log.error('Error downloading PDF:', downloadError);
+                
+                // Return more detailed error for debugging
+                const errorMessage = downloadError.message || 'Certificate file not found';
+                const statusCode = downloadError.statusCode === 404 ? 404 : 500;
+                
                 return {
-                    status: 404,
+                    status: statusCode,
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
                         success: false,
-                        message: 'Certificate file not found'
+                        message: `Failed to download certificate: ${errorMessage}`,
+                        certificateId: certificateId
                     })
                 };
             }

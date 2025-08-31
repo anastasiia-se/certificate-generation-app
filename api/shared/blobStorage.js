@@ -45,12 +45,20 @@ class BlobStorageService {
 
     async downloadPDF(certificateId) {
         if (!this.isConfigured) {
-            throw new Error('Blob storage not configured');
+            throw new Error('Blob storage not configured - check AZURE_STORAGE_CONNECTION_STRING');
         }
 
         try {
             const blobName = `${certificateId}.pdf`;
             const blockBlobClient = this.containerClient.getBlockBlobClient(blobName);
+            
+            // Check if blob exists first
+            const exists = await blockBlobClient.exists();
+            if (!exists) {
+                const error = new Error(`Certificate PDF not found: ${blobName}`);
+                error.statusCode = 404;
+                throw error;
+            }
             
             const downloadResponse = await blockBlobClient.download(0);
             const downloadedContent = await this.streamToBuffer(downloadResponse.readableStreamBody);
@@ -58,6 +66,11 @@ class BlobStorageService {
             return downloadedContent;
         } catch (error) {
             console.error('Error downloading PDF from blob storage:', error);
+            if (error.statusCode) {
+                throw error;
+            }
+            // Add status code if not present
+            error.statusCode = error.statusCode || 500;
             throw error;
         }
     }
