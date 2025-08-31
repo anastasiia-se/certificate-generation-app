@@ -46,18 +46,27 @@ const CertificateForm: React.FC<CertificateFormProps> = ({ onCertificateGenerate
     try {
       const response = await certificateAPI.generateCertificate(formData);
       if (response.success) {
-        let successMessage = 'Certificate generated successfully!';
+        let successMessage = `Certificate generated successfully! Certificate ID: ${response.certificateId}`;
         if (response.emailSent) {
-          successMessage += ' Emails have been sent to the recipient and manager.';
+          successMessage += ' (Email functionality coming soon)';
         }
         setSuccess(successMessage);
-        if (response.certificateUrl) {
-          window.open(response.certificateUrl, '_blank');
-        }
+        // Don't try to open certificate URL until PDF generation is implemented
+        // if (response.certificateUrl) {
+        //   window.open(response.certificateUrl, '_blank');
+        // }
         // Trigger refresh of certificate history
         if (onCertificateGenerated) {
           onCertificateGenerated();
         }
+        // Clear form after successful submission
+        setFormData({
+          name: '',
+          surname: '',
+          recipientEmail: '',
+          managerEmail: '',
+          completionDate: new Date().toISOString().split('T')[0]
+        });
       } else {
         setError(response.message || 'Failed to generate certificate');
       }

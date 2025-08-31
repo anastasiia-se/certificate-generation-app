@@ -119,13 +119,15 @@ const CertificateHistory: React.FC<CertificateHistoryProps> = ({ refreshTrigger 
                     />
                   </TableCell>
                   <TableCell align="center">
-                    <Tooltip title="Download Certificate">
-                      <IconButton
-                        onClick={() => handleDownload(cert.certificateId, cert.name, cert.surname)}
-                        size="small"
-                      >
-                        <DownloadIcon />
-                      </IconButton>
+                    <Tooltip title="PDF download coming soon">
+                      <span>
+                        <IconButton
+                          disabled
+                          size="small"
+                        >
+                          <DownloadIcon />
+                        </IconButton>
+                      </span>
                     </Tooltip>
                   </TableCell>
                 </TableRow>
