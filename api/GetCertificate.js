@@ -1,7 +1,6 @@
 const { app } = require('@azure/functions');
 const certificateStore = require('./shared/certificateStore');
-const fs = require('fs');
-const path = require('path');
+const blobStorage = require('./shared/blobStorage');
 
 app.http('GetCertificate', {
     methods: ['GET'],
@@ -27,9 +26,12 @@ app.http('GetCertificate', {
                 };
             }
 
-            // Check if PDF file exists
-            const pdfPath = certificate.certificatePath;
-            if (!fs.existsSync(pdfPath)) {
+            // Download PDF from Blob Storage
+            let pdfBuffer;
+            try {
+                pdfBuffer = await blobStorage.downloadPDF(certificateId);
+            } catch (downloadError) {
+                context.log.error('Error downloading PDF:', downloadError);
                 return {
                     status: 404,
                     headers: {
@@ -41,9 +43,6 @@ app.http('GetCertificate', {
                     })
                 };
             }
-
-            // Read and return PDF file
-            const pdfBuffer = fs.readFileSync(pdfPath);
             
             return {
                 status: 200,

@@ -1,5 +1,7 @@
 const { app } = require('@azure/functions');
 const certificateStore = require('./shared/certificateStore');
+const { generateCertificatePDF } = require('./shared/pdfGenerator');
+const blobStorage = require('./shared/blobStorage');
 
 app.http('GenerateCertificate', {
     methods: ['POST'],
@@ -41,11 +43,26 @@ app.http('GenerateCertificate', {
                 certificatePath: `certificates/${certificateId}.pdf`
             };
 
-            // TODO: Generate PDF certificate (temporarily disabled for production)
-            // PDF generation will be implemented with Azure Blob Storage
-            
-            // For now, just create a placeholder path
-            certificateRecord.certificatePath = `certificates/${certificateId}.pdf`;
+            // Generate PDF certificate
+            let pdfUrl = null;
+            try {
+                const pdfBuffer = await generateCertificatePDF({
+                    name,
+                    surname,
+                    completionDate,
+                    certificateId
+                });
+                
+                // Upload to Azure Blob Storage
+                pdfUrl = await blobStorage.uploadPDF(certificateId, pdfBuffer);
+                certificateRecord.certificatePath = pdfUrl || `certificates/${certificateId}.pdf`;
+                
+                context.log('PDF generated and uploaded:', certificateId);
+            } catch (pdfError) {
+                context.log.error('Error generating/uploading PDF:', pdfError);
+                // Continue without PDF - don't fail the entire request
+                certificateRecord.certificatePath = null;
+            }
 
             // Store in memory (replace with Cosmos DB)
             certificateStore.addCertificate(certificateRecord);

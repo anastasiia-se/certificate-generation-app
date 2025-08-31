@@ -42,22 +42,22 @@ const CertificateHistory: React.FC<CertificateHistoryProps> = ({ refreshTrigger 
     fetchCertificates();
   }, [refreshTrigger]);
 
-  // Download functionality will be implemented once PDF generation is ready
-  // const handleDownload = async (certificateId: string, name: string, surname: string) => {
-  //   try {
-  //     const blob = await certificateAPI.downloadCertificate(certificateId);
-  //     const url = window.URL.createObjectURL(blob);
-  //     const a = document.createElement('a');
-  //     a.href = url;
-  //     a.download = `certificate_${name}_${surname}.pdf`;
-  //     document.body.appendChild(a);
-  //     a.click();
-  //     window.URL.revokeObjectURL(url);
-  //     document.body.removeChild(a);
-  //   } catch (error) {
-  //     console.error('Failed to download certificate:', error);
-  //   }
-  // };
+  const handleDownload = async (certificateId: string, name: string, surname: string) => {
+    try {
+      const blob = await certificateAPI.downloadCertificate(certificateId);
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `certificate_${name}_${surname}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Failed to download certificate:', error);
+      alert('Failed to download certificate. Please try again.');
+    }
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -120,15 +120,14 @@ const CertificateHistory: React.FC<CertificateHistoryProps> = ({ refreshTrigger 
                     />
                   </TableCell>
                   <TableCell align="center">
-                    <Tooltip title="PDF download coming soon">
-                      <span>
-                        <IconButton
-                          disabled
-                          size="small"
-                        >
-                          <DownloadIcon />
-                        </IconButton>
-                      </span>
+                    <Tooltip title="Download Certificate">
+                      <IconButton
+                        onClick={() => handleDownload(cert.certificateId, cert.name, cert.surname)}
+                        size="small"
+                        color="primary"
+                      >
+                        <DownloadIcon />
+                      </IconButton>
                     </Tooltip>
                   </TableCell>
                 </TableRow>
