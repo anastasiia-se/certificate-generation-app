@@ -46,8 +46,9 @@ app.http('GenerateCertificate', {
 
             // Generate PDF certificate
             let pdfUrl = null;
+            let pdfBuffer = null;
             try {
-                const pdfBuffer = await generateCertificatePDF({
+                pdfBuffer = await generateCertificatePDF({
                     name,
                     surname,
                     completionDate,
@@ -110,6 +111,7 @@ app.http('GenerateCertificate', {
 
         } catch (error) {
             context.log.error('Error generating certificate:', error);
+            context.log.error('Error stack:', error.stack);
             
             return {
                 status: 500,
@@ -118,7 +120,9 @@ app.http('GenerateCertificate', {
                 },
                 body: JSON.stringify({
                     success: false,
-                    message: 'Internal server error'
+                    message: 'Internal server error',
+                    error: error.message,
+                    details: process.env.NODE_ENV !== 'production' ? error.stack : undefined
                 })
             };
         }
