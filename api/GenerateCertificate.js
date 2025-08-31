@@ -2,6 +2,7 @@ const { app } = require('@azure/functions');
 const tableStorage = require('./shared/tableStorage');
 const { generateCertificatePDF } = require('./shared/pdfGenerator');
 const blobStorage = require('./shared/blobStorage');
+const emailService = require('./shared/emailService');
 
 app.http('GenerateCertificate', {
     methods: ['POST'],
@@ -67,7 +68,25 @@ app.http('GenerateCertificate', {
             // Store in Azure Table Storage
             await tableStorage.addCertificate(certificateRecord);
 
-            // TODO: Send emails using SendGrid
+            // Send emails with the certificate
+            let emailResult = { sent: false };
+            if (pdfBuffer) {
+                try {
+                    emailResult = await emailService.sendCertificateEmails(certificateRecord, pdfBuffer);
+                    
+                    if (emailResult.sent) {
+                        // Update the record with actual email status
+                        certificateRecord.emailSent = true;
+                        await tableStorage.updateCertificate(certificateId, { emailSent: true });
+                        context.log('Emails sent successfully for certificate:', certificateId);
+                    } else {
+                        context.log('Email sending failed:', emailResult.errors);
+                    }
+                } catch (emailError) {
+                    context.log.error('Error sending emails:', emailError);
+                    // Don't fail the entire request if email fails
+                }
+            }
             
             context.log('Certificate generated:', certificateId);
 
@@ -81,7 +100,11 @@ app.http('GenerateCertificate', {
                     message: 'Certificate generated successfully',
                     certificateId,
                     certificateUrl: `https://certificate-functions-app-77132.azurewebsites.net/api/certificates/${certificateId}`,
-                    emailSent: true
+                    emailSent: emailResult.sent,
+                    emailDetails: emailResult.sent ? {
+                        recipientSent: emailResult.recipientSent,
+                        managerSent: emailResult.managerSent
+                    } : null
                 })
             };
 
