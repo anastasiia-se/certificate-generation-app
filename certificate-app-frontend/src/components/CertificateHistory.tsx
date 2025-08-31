@@ -42,21 +42,22 @@ const CertificateHistory: React.FC<CertificateHistoryProps> = ({ refreshTrigger 
     fetchCertificates();
   }, [refreshTrigger]);
 
-  const handleDownload = async (certificateId: string, name: string, surname: string) => {
-    try {
-      const blob = await certificateAPI.downloadCertificate(certificateId);
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `certificate_${name}_${surname}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (error) {
-      console.error('Failed to download certificate:', error);
-    }
-  };
+  // Download functionality will be implemented once PDF generation is ready
+  // const handleDownload = async (certificateId: string, name: string, surname: string) => {
+  //   try {
+  //     const blob = await certificateAPI.downloadCertificate(certificateId);
+  //     const url = window.URL.createObjectURL(blob);
+  //     const a = document.createElement('a');
+  //     a.href = url;
+  //     a.download = `certificate_${name}_${surname}.pdf`;
+  //     document.body.appendChild(a);
+  //     a.click();
+  //     window.URL.revokeObjectURL(url);
+  //     document.body.removeChild(a);
+  //   } catch (error) {
+  //     console.error('Failed to download certificate:', error);
+  //   }
+  // };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
