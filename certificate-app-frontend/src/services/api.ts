@@ -34,5 +34,15 @@ export const certificateAPI = {
       console.error('Error fetching certificate history:', error);
       return [];
     }
+  },
+
+  deleteDiploma: async (diplomaId: string): Promise<{ success: boolean; message: string }> => {
+    try {
+      const response = await axios.delete(`${API_BASE_URL}/diplomas/${diplomaId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error deleting diploma:', error);
+      throw error;
+    }
   }
 };

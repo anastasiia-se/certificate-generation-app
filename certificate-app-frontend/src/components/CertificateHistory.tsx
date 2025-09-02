@@ -12,10 +12,17 @@ import {
   IconButton,
   Tooltip,
   CircularProgress,
-  Box
+  Box,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button
 } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import DeleteIcon from '@mui/icons-material/Delete';
 import SchoolIcon from '@mui/icons-material/School';
 import { CertificateRecord } from '../types/Certificate';
 import { certificateAPI } from '../services/api';
@@ -27,6 +34,9 @@ interface CertificateHistoryProps {
 const CertificateHistory: React.FC<CertificateHistoryProps> = ({ refreshTrigger }) => {
   const [certificates, setCertificates] = useState<CertificateRecord[]>([]);
   const [loading, setLoading] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [diplomaToDelete, setDiplomaToDelete] = useState<CertificateRecord | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const fetchCertificates = async () => {
     setLoading(true);
@@ -60,6 +70,36 @@ const CertificateHistory: React.FC<CertificateHistoryProps> = ({ refreshTrigger 
       console.error('Failed to download diploma:', error);
       alert('Failed to download diploma. Please try again.');
     }
+  };
+
+  const handleDeleteClick = (diploma: CertificateRecord) => {
+    setDiplomaToDelete(diploma);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!diplomaToDelete) return;
+
+    setDeleting(true);
+    try {
+      await certificateAPI.deleteDiploma(diplomaToDelete.certificateId);
+      
+      // Remove the diploma from the local state
+      setCertificates(prev => prev.filter(cert => cert.certificateId !== diplomaToDelete.certificateId));
+      
+      setDeleteDialogOpen(false);
+      setDiplomaToDelete(null);
+    } catch (error) {
+      console.error('Failed to delete diploma:', error);
+      alert('Failed to delete diploma. Please try again.');
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false);
+    setDiplomaToDelete(null);
   };
 
   const formatDate = (dateString: string) => {
@@ -166,15 +206,31 @@ const CertificateHistory: React.FC<CertificateHistoryProps> = ({ refreshTrigger 
                     />
                   </TableCell>
                   <TableCell align="center">
-                    <Tooltip title="Download Diploma">
-                      <IconButton
-                        onClick={() => handleDownload(cert.certificateId, cert.name, cert.surname)}
-                        size="small"
-                        color="primary"
-                      >
-                        <DownloadIcon />
-                      </IconButton>
-                    </Tooltip>
+                    <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1 }}>
+                      <Tooltip title="Download Diploma">
+                        <IconButton
+                          onClick={() => handleDownload(cert.certificateId, cert.name, cert.surname)}
+                          size="small"
+                          color="primary"
+                        >
+                          <DownloadIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Delete Diploma">
+                        <IconButton
+                          onClick={() => handleDeleteClick(cert)}
+                          size="small"
+                          sx={{ 
+                            color: '#DC3545',
+                            '&:hover': {
+                              backgroundColor: '#FFF5F5',
+                            }
+                          }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
                   </TableCell>
                 </TableRow>
               ))
@@ -182,6 +238,55 @@ const CertificateHistory: React.FC<CertificateHistoryProps> = ({ refreshTrigger 
           </TableBody>
         </Table>
       </TableContainer>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={handleDeleteCancel}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle sx={{ color: '#DC3545', fontWeight: 600 }}>
+          Confirm Deletion
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete this diploma?
+          </DialogContentText>
+          {diplomaToDelete && (
+            <Box sx={{ mt: 2, p: 2, backgroundColor: '#F8F9FA', borderRadius: 1 }}>
+              <Typography variant="body2"><strong>Recipient:</strong> {diplomaToDelete.name} {diplomaToDelete.surname}</Typography>
+              <Typography variant="body2"><strong>Diploma ID:</strong> {diplomaToDelete.certificateId}</Typography>
+              <Typography variant="body2"><strong>Completion Date:</strong> {formatDate(diplomaToDelete.completionDate)}</Typography>
+            </Box>
+          )}
+          <DialogContentText sx={{ mt: 2, color: '#DC3545', fontSize: '0.9rem' }}>
+            <strong>Warning:</strong> This action cannot be undone. The diploma record and PDF file will be permanently deleted.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button 
+            onClick={handleDeleteCancel}
+            disabled={deleting}
+            sx={{ color: '#666' }}
+          >
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleDeleteConfirm}
+            disabled={deleting}
+            variant="contained"
+            sx={{ 
+              backgroundColor: '#DC3545',
+              '&:hover': {
+                backgroundColor: '#C82333',
+              }
+            }}
+          >
+            {deleting ? <CircularProgress size={20} color="inherit" /> : 'Delete'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Paper>
   );
 };
