@@ -125,60 +125,62 @@ class EmailService {
         });
 
         return `
-            <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background: white;">
-                <!-- Swedbank Header with Oak Leaves -->
-                <div style="background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%); height: 60px; background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20" fill="rgba(255,255,255,0.1)"><path d="M10,5 Q15,0 20,5 Q25,10 20,15 Q15,20 10,15 Q5,10 10,5 M30,5 Q35,0 40,5 Q45,10 40,15 Q35,20 30,15 Q25,10 30,5 M50,5 Q55,0 60,5 Q65,10 60,15 Q55,20 50,15 Q45,10 50,5 M70,5 Q75,0 80,5 Q85,10 80,15 Q75,20 70,15 Q65,10 70,5"/></svg>'); background-size: cover; position: relative;">
+            <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background: white; border: 1px solid #E0E0E0; border-radius: 8px; overflow: hidden;">
+                <!-- Clean Header with Subtle Branding -->
+                <div style="background: white; padding: 30px 40px; text-align: center; border-bottom: 3px solid #FF5F00;">
+                    <div style="color: #FF5F00; font-size: 24px; font-weight: 700; margin-bottom: 8px;">Swedbank</div>
+                    <h1 style="margin: 0; font-size: 28px; font-weight: 400; color: #2C2C2C;">🎓 Congratulations!</h1>
+                    <p style="margin: 8px 0 0 0; font-size: 16px; color: #666; font-weight: 300;">Your Professional Training is Complete</p>
                 </div>
                 
-                <!-- Swedbank Orange Header -->
-                <div style="background: #FF5F00; padding: 25px 30px; text-align: center; color: white;">
-                    <h1 style="margin: 0; font-size: 28px; font-weight: 600;">🎓 Congratulations!</h1>
-                    <p style="margin: 8px 0 0 0; font-size: 16px; opacity: 0.95;">Your Professional Training is Complete</p>
-                </div>
-                
-                <div style="background: #FAFAFA; padding: 30px; border-left: 4px solid #FF5F00;">
-                    <h2 style="color: #2C2C2C; margin: 0 0 20px 0; font-size: 22px; font-weight: 500;">
+                <div style="background: white; padding: 40px;">
+                    <h2 style="color: #2C2C2C; margin: 0 0 25px 0; font-size: 20px; font-weight: 500;">
                         Dear ${certificateData.name} ${certificateData.surname},
                     </h2>
                     
-                    <p style="color: #666; line-height: 1.7; margin: 0 0 20px 0; font-size: 15px;">
-                        We are delighted to inform you that your <strong>diploma has been successfully generated</strong> 
-                        for completing the <strong>Gen AI Training for Technical Professionals</strong> program on ${completionDate}.
+                    <p style="color: #666; line-height: 1.8; margin: 0 0 25px 0; font-size: 16px;">
+                        We are delighted to inform you that your diploma has been successfully generated 
+                        for completing the <strong>Gen AI Training for Technical Professionals</strong> program on <strong>${completionDate}</strong>.
                     </p>
                     
-                    <div style="background: white; padding: 25px; border-radius: 8px; margin: 25px 0; border: 1px solid #E0E0E0; border-left: 4px solid #FF5F00;">
-                        <h3 style="color: #FF5F00; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">Diploma Details</h3>
-                        <table style="width: 100%; border-collapse: collapse;">
-                            <tr><td style="padding: 8px 0; color: #666; font-weight: 500;">Diploma ID:</td><td style="padding: 8px 0; color: #2C2C2C; font-weight: 600;">${certificateData.certificateId}</td></tr>
-                            <tr><td style="padding: 8px 0; color: #666; font-weight: 500;">Issue Date:</td><td style="padding: 8px 0; color: #2C2C2C; font-weight: 600;">${new Date().toLocaleDateString()}</td></tr>
-                            <tr><td style="padding: 8px 0; color: #666; font-weight: 500;">Completion Date:</td><td style="padding: 8px 0; color: #2C2C2C; font-weight: 600;">${completionDate}</td></tr>
-                            <tr><td style="padding: 8px 0; color: #666; font-weight: 500;">Program:</td><td style="padding: 8px 0; color: #2C2C2C; font-weight: 600;">Gen AI Training for Technical Professionals</td></tr>
+                    <div style="background: #F8F9FA; padding: 25px; border-radius: 6px; margin: 30px 0; border: 1px solid #E9ECEF;">
+                        <h3 style="color: #2C2C2C; margin: 0 0 20px 0; font-size: 16px; font-weight: 600; display: flex; align-items: center;">
+                            <span style="display: inline-block; width: 4px; height: 20px; background: #FF5F00; margin-right: 10px; border-radius: 2px;"></span>
+                            Diploma Details
+                        </h3>
+                        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                            <tr><td style="padding: 10px 0; color: #666; font-weight: 500; width: 140px;">Diploma ID:</td><td style="padding: 10px 0; color: #2C2C2C; font-weight: 600;">${certificateData.certificateId}</td></tr>
+                            <tr><td style="padding: 10px 0; color: #666; font-weight: 500;">Issue Date:</td><td style="padding: 10px 0; color: #2C2C2C; font-weight: 600;">${new Date().toLocaleDateString()}</td></tr>
+                            <tr><td style="padding: 10px 0; color: #666; font-weight: 500;">Completion Date:</td><td style="padding: 10px 0; color: #2C2C2C; font-weight: 600;">${completionDate}</td></tr>
+                            <tr><td style="padding: 10px 0; color: #666; font-weight: 500;">Program:</td><td style="padding: 10px 0; color: #2C2C2C; font-weight: 600;">Gen AI Training for Technical Professionals</td></tr>
                         </table>
                     </div>
                     
-                    <p style="color: #666; line-height: 1.7; margin: 20px 0; font-size: 15px;">
-                        📎 Your <strong>professional diploma</strong> is attached to this email as a PDF document. 
-                        Please download and keep it for your records and future reference.
-                    </p>
+                    <div style="background: #F0F8FF; padding: 20px; border-radius: 6px; margin: 25px 0; border-left: 4px solid #4A90E2;">
+                        <p style="color: #2C5282; line-height: 1.6; margin: 0; font-size: 14px;">
+                            <strong>📎 Attachment:</strong> Your professional diploma is attached as a PDF document. 
+                            Please download and keep it for your records and future reference.
+                        </p>
+                    </div>
                     
-                    <div style="background: #FFF5F2; padding: 20px; border-radius: 8px; border-left: 4px solid #FF5F00; margin: 20px 0;">
-                        <p style="color: #CC4C00; line-height: 1.6; margin: 0; font-size: 14px;">
-                            <strong>🏆 Achievement Unlocked:</strong> You have successfully demonstrated expertise in developing 
+                    <div style="background: #F9FDF7; padding: 20px; border-radius: 6px; margin: 25px 0; border-left: 4px solid #22C55E;">
+                        <p style="color: #166534; line-height: 1.6; margin: 0; font-size: 14px;">
+                            <strong>🏆 Achievement:</strong> You have successfully demonstrated expertise in developing 
                             Generative AI applications within regulated environments, adhering to industry best practices.
                         </p>
                     </div>
                     
-                    <p style="color: #666; line-height: 1.7; margin: 20px 0 0 0; font-size: 15px;">
-                        If you have any questions regarding your diploma or the program, please don't hesitate to contact our team.
+                    <p style="color: #666; line-height: 1.8; margin: 30px 0 0 0; font-size: 15px;">
+                        If you have any questions regarding your diploma or the program, please don't hesitate to contact our team at 
+                        <a href="mailto:ai.learning@swedbank.se" style="color: #FF5F00; text-decoration: none; font-weight: 500;">ai.learning@swedbank.se</a>
                     </p>
                 </div>
                 
-                <!-- Swedbank Footer -->
-                <div style="background: #2C2C2C; padding: 20px 30px; text-align: center;">
-                    <div style="color: #FF5F00; font-size: 18px; font-weight: 600; margin-bottom: 8px;">Swedbank</div>
-                    <p style="color: #999; font-size: 12px; margin: 0; line-height: 1.5;">
+                <!-- Clean Footer -->
+                <div style="background: #F8F9FA; padding: 25px; text-align: center; border-top: 1px solid #E9ECEF;">
+                    <div style="color: #FF5F00; font-size: 16px; font-weight: 600; margin-bottom: 8px;">Swedbank</div>
+                    <p style="color: #6C757D; font-size: 12px; margin: 0; line-height: 1.5;">
                         This is an automated message from the Gen AI Training for Technical Professionals program.<br>
-                        Professional Training Excellence • Regulated Environment Expertise<br>
                         Generated on ${new Date().toLocaleString()}
                     </p>
                 </div>
@@ -194,56 +196,62 @@ class EmailService {
         });
 
         return `
-            <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background: white;">
-                <!-- Manager Header -->
-                <div style="background: #2C2C2C; padding: 25px 30px; text-align: center; color: white;">
-                    <h2 style="margin: 0; font-size: 24px; font-weight: 600;">📋 Diploma Notification</h2>
-                    <p style="margin: 8px 0 0 0; font-size: 14px; opacity: 0.9;">Professional Training Completion Alert</p>
+            <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background: white; border: 1px solid #E0E0E0; border-radius: 8px; overflow: hidden;">
+                <!-- Professional Header for Manager -->
+                <div style="background: white; padding: 30px 40px; text-align: center; border-bottom: 3px solid #FF5F00;">
+                    <div style="color: #FF5F00; font-size: 24px; font-weight: 700; margin-bottom: 8px;">Swedbank</div>
+                    <h1 style="margin: 0; font-size: 26px; font-weight: 400; color: #2C2C2C;">📋 Diploma Notification</h1>
+                    <p style="margin: 8px 0 0 0; font-size: 16px; color: #666; font-weight: 300;">Professional Training Completion Alert</p>
                 </div>
                 
-                <div style="background: #FAFAFA; padding: 30px; border-left: 4px solid #FF5F00;">
-                    <h3 style="color: #2C2C2C; margin: 0 0 20px 0; font-size: 20px; font-weight: 600;">
+                <div style="background: white; padding: 40px;">
+                    <h3 style="color: #2C2C2C; margin: 0 0 25px 0; font-size: 20px; font-weight: 600;">
                         Diploma Successfully Issued
                     </h3>
                     
-                    <p style="color: #666; line-height: 1.7; margin: 0 0 20px 0; font-size: 15px;">
-                        This is to notify you that a <strong>professional diploma</strong> has been successfully issued to the following participant:
+                    <p style="color: #666; line-height: 1.8; margin: 0 0 25px 0; font-size: 16px;">
+                        This is to notify you that a professional diploma has been successfully issued to the following participant:
                     </p>
                     
-                    <div style="background: white; padding: 25px; border-radius: 8px; margin: 25px 0; border: 1px solid #E0E0E0; border-left: 4px solid #FF5F00;">
-                        <h4 style="color: #FF5F00; margin: 0 0 15px 0; font-size: 16px; font-weight: 600;">Participant Information</h4>
-                        <table style="width: 100%; border-collapse: collapse;">
-                            <tr><td style="padding: 8px 0; color: #666; font-weight: 500; width: 140px;">Recipient:</td><td style="padding: 8px 0; color: #2C2C2C; font-weight: 600;">${certificateData.name} ${certificateData.surname}</td></tr>
-                            <tr><td style="padding: 8px 0; color: #666; font-weight: 500;">Email:</td><td style="padding: 8px 0; color: #2C2C2C; font-weight: 600;">${certificateData.recipientEmail}</td></tr>
-                            <tr><td style="padding: 8px 0; color: #666; font-weight: 500;">Diploma ID:</td><td style="padding: 8px 0; color: #2C2C2C; font-weight: 600;">${certificateData.certificateId}</td></tr>
-                            <tr><td style="padding: 8px 0; color: #666; font-weight: 500;">Program:</td><td style="padding: 8px 0; color: #2C2C2C; font-weight: 600;">Gen AI Training for Technical Professionals</td></tr>
-                            <tr><td style="padding: 8px 0; color: #666; font-weight: 500;">Completion Date:</td><td style="padding: 8px 0; color: #2C2C2C; font-weight: 600;">${completionDate}</td></tr>
-                            <tr><td style="padding: 8px 0; color: #666; font-weight: 500;">Issue Date:</td><td style="padding: 8px 0; color: #2C2C2C; font-weight: 600;">${new Date().toLocaleDateString()}</td></tr>
+                    <div style="background: #F8F9FA; padding: 25px; border-radius: 6px; margin: 30px 0; border: 1px solid #E9ECEF;">
+                        <h4 style="color: #2C2C2C; margin: 0 0 20px 0; font-size: 16px; font-weight: 600; display: flex; align-items: center;">
+                            <span style="display: inline-block; width: 4px; height: 20px; background: #FF5F00; margin-right: 10px; border-radius: 2px;"></span>
+                            Participant Information
+                        </h4>
+                        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                            <tr><td style="padding: 10px 0; color: #666; font-weight: 500; width: 140px;">Recipient:</td><td style="padding: 10px 0; color: #2C2C2C; font-weight: 600;">${certificateData.name} ${certificateData.surname}</td></tr>
+                            <tr><td style="padding: 10px 0; color: #666; font-weight: 500;">Email:</td><td style="padding: 10px 0; color: #2C2C2C; font-weight: 600;">${certificateData.recipientEmail}</td></tr>
+                            <tr><td style="padding: 10px 0; color: #666; font-weight: 500;">Diploma ID:</td><td style="padding: 10px 0; color: #2C2C2C; font-weight: 600;">${certificateData.certificateId}</td></tr>
+                            <tr><td style="padding: 10px 0; color: #666; font-weight: 500;">Program:</td><td style="padding: 10px 0; color: #2C2C2C; font-weight: 600;">Gen AI Training for Technical Professionals</td></tr>
+                            <tr><td style="padding: 10px 0; color: #666; font-weight: 500;">Completion Date:</td><td style="padding: 10px 0; color: #2C2C2C; font-weight: 600;">${completionDate}</td></tr>
+                            <tr><td style="padding: 10px 0; color: #666; font-weight: 500;">Issue Date:</td><td style="padding: 10px 0; color: #2C2C2C; font-weight: 600;">${new Date().toLocaleDateString()}</td></tr>
                         </table>
                     </div>
                     
-                    <div style="background: #FFF5F2; padding: 20px; border-radius: 8px; border-left: 4px solid #FF5F00; margin: 20px 0;">
-                        <p style="color: #CC4C00; line-height: 1.6; margin: 0; font-size: 14px;">
+                    <div style="background: #F0F8FF; padding: 20px; border-radius: 6px; margin: 25px 0; border-left: 4px solid #4A90E2;">
+                        <p style="color: #2C5282; line-height: 1.6; margin: 0; font-size: 14px;">
+                            <strong>📎 Attachment:</strong> A copy of the professional diploma is attached to this email for your records and documentation.
+                        </p>
+                    </div>
+                    
+                    <div style="background: #F9FDF7; padding: 20px; border-radius: 6px; margin: 25px 0; border-left: 4px solid #22C55E;">
+                        <p style="color: #166534; line-height: 1.6; margin: 0; font-size: 14px;">
                             <strong>✅ Program Completed:</strong> The participant has successfully demonstrated expertise in developing 
                             Generative AI applications within regulated environments, meeting all Swedbank professional standards.
                         </p>
                     </div>
                     
-                    <p style="color: #666; line-height: 1.7; margin: 20px 0; font-size: 15px;">
-                        📎 A copy of the <strong>professional diploma</strong> is attached to this email for your records and documentation.
-                    </p>
-                    
-                    <p style="color: #666; line-height: 1.7; margin: 20px 0 0 0; font-size: 15px;">
-                        For any questions regarding this diploma or the training program, please contact our team.
+                    <p style="color: #666; line-height: 1.8; margin: 30px 0 0 0; font-size: 15px;">
+                        For any questions regarding this diploma or the training program, please contact our team at 
+                        <a href="mailto:ai.learning@swedbank.se" style="color: #FF5F00; text-decoration: none; font-weight: 500;">ai.learning@swedbank.se</a>
                     </p>
                 </div>
                 
-                <!-- Swedbank Footer -->
-                <div style="background: #2C2C2C; padding: 20px 30px; text-align: center;">
-                    <div style="color: #FF5F00; font-size: 18px; font-weight: 600; margin-bottom: 8px;">Swedbank</div>
-                    <p style="color: #999; font-size: 12px; margin: 0; line-height: 1.5;">
+                <!-- Clean Footer -->
+                <div style="background: #F8F9FA; padding: 25px; text-align: center; border-top: 1px solid #E9ECEF;">
+                    <div style="color: #FF5F00; font-size: 16px; font-weight: 600; margin-bottom: 8px;">Swedbank</div>
+                    <p style="color: #6C757D; font-size: 12px; margin: 0; line-height: 1.5;">
                         Automated notification from Gen AI Training for Technical Professionals<br>
-                        Excellence in Professional Development • Regulated Environment Expertise<br>
                         Generated on ${new Date().toLocaleString()}
                     </p>
                 </div>
