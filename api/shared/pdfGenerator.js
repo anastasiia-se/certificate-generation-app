@@ -20,61 +20,82 @@ function generateCertificatePDF(certificateData) {
             });
             doc.on('error', reject);
 
-            // State-of-the-art certificate design with Swedbank elements
+            // State-of-the-art diploma design with Swedbank elements
             const { name, surname, completionDate, certificateId } = certificateData;
             const pageWidth = doc.page.width;
             const pageHeight = doc.page.height;
             const orangeColor = '#FF6B35'; // Swedbank orange
-            const goldColor = '#DAA520';   // Elegant gold accent
             const darkText = '#2C2C2C';
             const lightText = '#666666';
             const centerX = pageWidth / 2;
             
-            // Subtle oak leaves background - very light watermark effect across entire page
+            // Green oak leaves frame - 2cm (approximately 57 points) thick border
+            const frameWidth = 57; // 2cm in points
             try {
                 const bgImagePath = path.join(__dirname, 'oak-leaves-bg.jpg');
                 if (fs.existsSync(bgImagePath)) {
                     doc.save();
-                    // Full page subtle background
-                    doc.opacity(0.08)  // Very subtle watermark
-                       .image(bgImagePath, 0, 0, {
+                    
+                    // Top frame
+                    doc.rect(0, 0, pageWidth, frameWidth).clip();
+                    doc.image(bgImagePath, 0, 0, {
                         width: pageWidth,
-                        height: pageHeight,
-                        cover: [pageWidth, pageHeight]
+                        height: frameWidth * 2,
+                        cover: [pageWidth, frameWidth * 2]
                     });
-                    doc.opacity(1);
+                    doc.restore();
+                    
+                    // Bottom frame
+                    doc.save();
+                    doc.rect(0, pageHeight - frameWidth, pageWidth, frameWidth).clip();
+                    doc.image(bgImagePath, 0, pageHeight - frameWidth * 2, {
+                        width: pageWidth,
+                        height: frameWidth * 2,
+                        cover: [pageWidth, frameWidth * 2]
+                    });
+                    doc.restore();
+                    
+                    // Left frame
+                    doc.save();
+                    doc.rect(0, 0, frameWidth, pageHeight).clip();
+                    doc.image(bgImagePath, 0, 0, {
+                        width: frameWidth * 2,
+                        height: pageHeight,
+                        cover: [frameWidth * 2, pageHeight]
+                    });
+                    doc.restore();
+                    
+                    // Right frame
+                    doc.save();
+                    doc.rect(pageWidth - frameWidth, 0, frameWidth, pageHeight).clip();
+                    doc.image(bgImagePath, pageWidth - frameWidth * 2, 0, {
+                        width: frameWidth * 2,
+                        height: pageHeight,
+                        cover: [frameWidth * 2, pageHeight]
+                    });
                     doc.restore();
                 }
             } catch (imgError) {
-                console.log('Could not add background image:', imgError);
+                console.log('Could not add background frame:', imgError);
             }
             
-            // Elegant border system
-            // Outer decorative border
-            doc.rect(20, 20, pageWidth - 40, pageHeight - 40)
+            // White center area for content
+            doc.rect(frameWidth, frameWidth, pageWidth - frameWidth * 2, pageHeight - frameWidth * 2)
+               .fill('white');
+            
+            // Elegant inner border
+            doc.rect(frameWidth + 10, frameWidth + 10, pageWidth - frameWidth * 2 - 20, pageHeight - frameWidth * 2 - 20)
                .lineWidth(2)
                .stroke(orangeColor);
             
-            // Inner elegant frame
-            doc.rect(35, 35, pageWidth - 70, pageHeight - 70)
-               .lineWidth(0.5)
-               .stroke(goldColor);
-            
-            // Top decorative header bar
-            doc.rect(50, 50, pageWidth - 100, 3)
-               .fill(orangeColor);
-            
-            // Bottom decorative footer bar  
-            doc.rect(50, pageHeight - 53, pageWidth - 100, 3)
-               .fill(orangeColor);
-            
             // Header section with Swedbank logo
+            const contentTop = frameWidth + 30; // Start content below frame
             try {
                 const logoPath = path.join(__dirname, 'swedbank-logo.png');
                 if (fs.existsSync(logoPath)) {
-                    const logoWidth = 200;
-                    const logoHeight = 50;
-                    doc.image(logoPath, centerX - logoWidth/2, 80, {
+                    const logoWidth = 180;
+                    const logoHeight = 45;
+                    doc.image(logoPath, centerX - logoWidth/2, contentTop + 10, {
                         width: logoWidth,
                         height: logoHeight,
                         fit: [logoWidth, logoHeight]
@@ -84,9 +105,9 @@ function generateCertificatePDF(certificateData) {
                     doc.font('Helvetica-Bold')
                        .fontSize(28)
                        .fillColor(orangeColor)
-                       .text('Swedbank', 0, 85, {
+                       .text('Swedbank', frameWidth, contentTop + 15, {
                            align: 'center',
-                           width: pageWidth
+                           width: pageWidth - frameWidth * 2
                        });
                 }
             } catch (logoError) {
@@ -95,94 +116,94 @@ function generateCertificatePDF(certificateData) {
             
             // DIPLOMA - elegant title
             doc.font('Helvetica-Bold')
-               .fontSize(72)
+               .fontSize(68)
                .fillColor(darkText)
-               .text('DIPLOMA', 0, 160, { 
+               .text('DIPLOMA', frameWidth, contentTop + 70, { 
                    align: 'center',
-                   width: pageWidth,
+                   width: pageWidth - frameWidth * 2,
                    characterSpacing: 4
                });
             
             // Decorative line under title
-            const lineY = 240;
-            doc.moveTo(centerX - 150, lineY)
-               .lineTo(centerX - 50, lineY)
+            const lineY = contentTop + 145;
+            doc.moveTo(centerX - 120, lineY)
+               .lineTo(centerX - 40, lineY)
                .lineWidth(2)
                .stroke(orangeColor);
                
-            doc.moveTo(centerX + 50, lineY)
-               .lineTo(centerX + 150, lineY)
+            doc.moveTo(centerX + 40, lineY)
+               .lineTo(centerX + 120, lineY)
                .lineWidth(2)
                .stroke(orangeColor);
                
-            // Center decorative element
-            doc.circle(centerX, lineY, 8)
-               .fill(goldColor);
+            // Center decorative element - oak leaf circle
+            doc.circle(centerX, lineY, 6)
+               .fill(orangeColor);
             
             // Presentation text
             doc.font('Helvetica')
-               .fontSize(16)
+               .fontSize(15)
                .fillColor(darkText)
-               .text('This certificate is proudly presented to', 0, 270, {
+               .text('This diploma is proudly presented to', frameWidth, contentTop + 170, {
                    align: 'center',
-                   width: pageWidth
+                   width: pageWidth - frameWidth * 2
                });
             
             // Recipient name with elegant underline
-            const nameY = 310;
+            const nameY = contentTop + 200;
             doc.font('Times-Bold')
-               .fontSize(36)
+               .fontSize(34)
                .fillColor(darkText)
-               .text(`${name} ${surname}`, 0, nameY, {
+               .text(`${name} ${surname}`, frameWidth, nameY, {
                    align: 'center',
-                   width: pageWidth
+                   width: pageWidth - frameWidth * 2
                });
                
             // Elegant underline for name
-            doc.moveTo(centerX - 200, nameY + 45)
-               .lineTo(centerX + 200, nameY + 45)
+            doc.moveTo(centerX - 180, nameY + 40)
+               .lineTo(centerX + 180, nameY + 40)
                .lineWidth(1)
-               .stroke(goldColor);
+               .stroke(orangeColor);
             
             // Program description
             doc.font('Helvetica')
-               .fontSize(16)
+               .fontSize(15)
                .fillColor(darkText)
-               .text('for successful completion of the comprehensive', 0, 380, {
+               .text('for successful completion of the comprehensive', frameWidth, contentTop + 260, {
                    align: 'center',
-                   width: pageWidth
+                   width: pageWidth - frameWidth * 2
                });
                
             doc.font('Helvetica-Bold')
-               .fontSize(22)
+               .fontSize(20)
                .fillColor(orangeColor)
-               .text('Generative AI Training Program', 0, 405, {
+               .text('Generative AI Training Program', frameWidth, contentTop + 285, {
                    align: 'center',
-                   width: pageWidth
+                   width: pageWidth - frameWidth * 2
                })
                .font('Helvetica-Bold')
-               .fontSize(18)
+               .fontSize(17)
                .fillColor(darkText)
-               .text('for Technical Professionals', 0, 435, {
+               .text('for Technical Professionals', frameWidth, contentTop + 310, {
                    align: 'center',
-                   width: pageWidth
+                   width: pageWidth - frameWidth * 2
                });
             
             // Achievement description
             doc.font('Helvetica')
-               .fontSize(12)
+               .fontSize(11)
                .fillColor(lightText)
-               .text('This program demonstrates expertise in developing AI applications within', 0, 470, {
+               .text('This program demonstrates expertise in developing AI applications within', frameWidth, contentTop + 340, {
                    align: 'center',
-                   width: pageWidth
+                   width: pageWidth - frameWidth * 2
                })
-               .text('regulated environments, adherence to industry best practices, and', 0, 485, {
+               .text('regulated environments, adherence to industry best practices, and', frameWidth, contentTop + 355, {
                    align: 'center',
-                   width: pageWidth
+                   width: pageWidth - frameWidth * 2
                })
-               .text('alignment with Swedbank\'s professional standards and guidelines.', 0, 500, {
+               .text('alignment with Swedbank\'s professional standards and guidelines.', frameWidth, contentTop + 370, {
                    align: 'center',
-                   width: pageWidth
+                   width: pageWidth - frameWidth * 2
                });
             
             // Date section with elegant formatting
@@ -192,34 +213,24 @@ function generateCertificatePDF(certificateData) {
                 day: 'numeric' 
             });
             
-            const dateY = 540;
+            const dateY = contentTop + 400;
             
-            // Decorative elements around date
-            doc.moveTo(centerX - 120, dateY + 15)
-               .quadraticCurveTo(centerX - 80, dateY + 10, centerX - 40, dateY + 15)
-               .lineWidth(1)
-               .stroke(goldColor);
-            
-            doc.moveTo(centerX + 40, dateY + 15)
-               .quadraticCurveTo(centerX + 80, dateY + 10, centerX + 120, dateY + 15)
-               .lineWidth(1)
-               .stroke(goldColor);
-            
+            // Simple date without overlapping decorative lines
             doc.font('Helvetica')
-               .fontSize(14)
+               .fontSize(13)
                .fillColor(darkText)
-               .text(`Completed on ${dateText}`, 0, dateY, {
+               .text(`Completed on ${dateText}`, frameWidth, dateY, {
                    align: 'center',
-                   width: pageWidth
+                   width: pageWidth - frameWidth * 2
                });
             
-            // Certificate ID at bottom right - elegant and discrete
+            // Diploma ID at bottom - elegant and discrete
             doc.font('Helvetica')
                .fontSize(8)
-               .fillColor('#AAAAAA')
-               .text(`Certificate ID: ${certificateId}`, 0, pageHeight - 40, {
+               .fillColor('#999999')
+               .text(`Diploma ID: ${certificateId}`, frameWidth, pageHeight - frameWidth - 20, {
                    align: 'center',
-                   width: pageWidth
+                   width: pageWidth - frameWidth * 2
                });
 
             doc.end();
