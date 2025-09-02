@@ -1,8 +1,20 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, Box, Chip } from '@mui/material';
+import { AppBar, Toolbar, Typography, Box, Chip, IconButton, Tooltip } from '@mui/material';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
+import LogoutOutlined from '@mui/icons-material/LogoutOutlined';
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  onLogout?: () => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ onLogout }) => {
+  
+  const handleLogout = () => {
+    localStorage.removeItem('swedbank_auth');
+    if (onLogout) {
+      onLogout();
+    }
+  };
   return (
     <Box>
       {/* Oak leaves strip at the very top */}
@@ -65,6 +77,22 @@ const Header: React.FC = () => {
               fontWeight: 500
             }}
           />
+          {onLogout && (
+            <Tooltip title="Logout">
+              <IconButton
+                onClick={handleLogout}
+                sx={{
+                  color: '#666666',
+                  '&:hover': {
+                    backgroundColor: '#FFF5F2',
+                    color: '#FF5F00',
+                  }
+                }}
+              >
+                <LogoutOutlined />
+              </IconButton>
+            </Tooltip>
+          )}
         </Box>
       </Toolbar>
     </AppBar>
