@@ -70,10 +70,10 @@ const CertificateForm: React.FC<CertificateFormProps> = ({ onCertificateGenerate
           completionDate: new Date().toISOString().split('T')[0]
         });
       } else {
-        setError(response.message || 'Failed to generate certificate');
+        setError(response.message || 'Failed to generate diploma');
       }
     } catch (err) {
-      setError('An error occurred while generating the certificate');
+      setError('An error occurred while generating the diploma');
     } finally {
       setLoading(false);
     }
@@ -88,7 +88,7 @@ const CertificateForm: React.FC<CertificateFormProps> = ({ onCertificateGenerate
         mx: 'auto', 
         mt: 4,
         border: '1px solid #E0E0E0',
-        borderTop: '4px solid #FF6B35',
+        borderTop: '4px solid #FF5F00',
         borderRadius: 2,
         background: 'white',
       }}
@@ -106,7 +106,7 @@ const CertificateForm: React.FC<CertificateFormProps> = ({ onCertificateGenerate
             mb: 2
           }}
         >
-          <WorkspacePremiumIcon sx={{ fontSize: 32, color: '#FF6B35' }} />
+          <WorkspacePremiumIcon sx={{ fontSize: 32, color: '#FF5F00' }} />
         </Box>
         <Typography variant="h4" gutterBottom sx={{ fontWeight: 500 }}>
           Generate Diploma
@@ -188,9 +188,9 @@ const CertificateForm: React.FC<CertificateFormProps> = ({ onCertificateGenerate
               py: 1.5,
               fontSize: '1rem',
               fontWeight: 500,
-              background: 'linear-gradient(135deg, #FF6B35 0%, #FF8F65 100%)',
+              background: 'linear-gradient(135deg, #FF5F00 0%, #FF8533 100%)',
               '&:hover': {
-                background: 'linear-gradient(135deg, #E55100 0%, #FF6B35 100%)',
+                background: 'linear-gradient(135deg, #CC4C00 0%, #FF5F00 100%)',
               }
             }}
           >

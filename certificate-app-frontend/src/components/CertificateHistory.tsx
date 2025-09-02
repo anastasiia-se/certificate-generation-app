@@ -34,7 +34,7 @@ const CertificateHistory: React.FC<CertificateHistoryProps> = ({ refreshTrigger 
       const data = await certificateAPI.getCertificateHistory();
       setCertificates(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error('Failed to fetch certificate history:', error);
+      console.error('Failed to fetch diploma history:', error);
       setCertificates([]);
     } finally {
       setLoading(false);
@@ -57,8 +57,8 @@ const CertificateHistory: React.FC<CertificateHistoryProps> = ({ refreshTrigger 
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (error) {
-      console.error('Failed to download certificate:', error);
-      alert('Failed to download certificate. Please try again.');
+      console.error('Failed to download diploma:', error);
+      alert('Failed to download diploma. Please try again.');
     }
   };
 
@@ -79,7 +79,7 @@ const CertificateHistory: React.FC<CertificateHistoryProps> = ({ refreshTrigger 
         p: 3, 
         mt: 4,
         border: '1px solid #E0E0E0',
-        borderTop: '4px solid #4CAF50',
+        borderTop: '4px solid #FF5F00',
         borderRadius: 2,
         background: 'white',
       }}
@@ -94,10 +94,10 @@ const CertificateHistory: React.FC<CertificateHistoryProps> = ({ refreshTrigger 
               width: 40,
               height: 40,
               borderRadius: '50%',
-              backgroundColor: '#F0FFF4',
+              backgroundColor: '#FFF5F2',
             }}
           >
-            <SchoolIcon sx={{ fontSize: 24, color: '#4CAF50' }} />
+            <SchoolIcon sx={{ fontSize: 24, color: '#FF5F00' }} />
           </Box>
           <Typography variant="h5" sx={{ fontWeight: 500, color: '#2C2C2C' }}>
             Diploma History
@@ -108,7 +108,7 @@ const CertificateHistory: React.FC<CertificateHistoryProps> = ({ refreshTrigger 
             onClick={fetchCertificates} 
             disabled={loading}
             sx={{ 
-              color: '#FF6B35',
+              color: '#FF5F00',
               '&:hover': {
                 backgroundColor: '#FFF5F2',
               }
@@ -138,7 +138,7 @@ const CertificateHistory: React.FC<CertificateHistoryProps> = ({ refreshTrigger 
                 <TableCell colSpan={7} align="center" sx={{ py: 4 }}>
                   <CircularProgress size={30} />
                   <Typography variant="body2" color="textSecondary" sx={{ mt: 2 }}>
-                    Loading certificates...
+                    Loading diplomas...
                   </Typography>
                 </TableCell>
               </TableRow>
@@ -166,7 +166,7 @@ const CertificateHistory: React.FC<CertificateHistoryProps> = ({ refreshTrigger 
                     />
                   </TableCell>
                   <TableCell align="center">
-                    <Tooltip title="Download Certificate">
+                    <Tooltip title="Download Diploma">
                       <IconButton
                         onClick={() => handleDownload(cert.certificateId, cert.name, cert.surname)}
                         size="small"

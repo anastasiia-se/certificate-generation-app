@@ -9,15 +9,15 @@ import CertificateHistory from './components/CertificateHistory';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#FF6B35', // Swedbank orange
-      light: '#FF8F65',
-      dark: '#E55100',
+      main: '#FF5F00', // Swedbank orange
+      light: '#FF8533',
+      dark: '#CC4C00',
       contrastText: '#FFFFFF',
     },
     secondary: {
-      main: '#4CAF50', // Green for nature/oak theme
-      light: '#66BB6A',
-      dark: '#388E3C',
+      main: '#FF5F00', // Orange secondary
+      light: '#FF8533',
+      dark: '#CC4C00',
     },
     background: {
       default: '#FAFAFA',
@@ -53,7 +53,7 @@ const theme = createTheme({
         contained: {
           boxShadow: 'none',
           '&:hover': {
-            boxShadow: '0 2px 8px rgba(255, 107, 53, 0.3)',
+            boxShadow: '0 2px 8px rgba(255, 95, 0, 0.3)',
           },
         },
       },
@@ -70,7 +70,7 @@ const theme = createTheme({
         root: {
           '& .MuiOutlinedInput-root': {
             '&:hover fieldset': {
-              borderColor: '#FF6B35',
+              borderColor: '#FF5F00',
             },
           },
         },
