@@ -9,6 +9,8 @@ import {
   CircularProgress,
   Stack
 } from '@mui/material';
+import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
+import SendIcon from '@mui/icons-material/Send';
 import { CertificateData } from '../types/Certificate';
 import { certificateAPI } from '../services/api';
 
@@ -46,9 +48,9 @@ const CertificateForm: React.FC<CertificateFormProps> = ({ onCertificateGenerate
     try {
       const response = await certificateAPI.generateCertificate(formData);
       if (response.success) {
-        let successMessage = `Certificate generated successfully! Certificate ID: ${response.certificateId}`;
+        let successMessage = `Diploma generated successfully! Diploma ID: ${response.certificateId}`;
         if (response.emailSent) {
-          successMessage += ' (Email functionality coming soon)';
+          successMessage += ' - Emails have been sent to recipients';
         }
         setSuccess(successMessage);
         // Don't try to open certificate URL until PDF generation is implemented
@@ -78,10 +80,41 @@ const CertificateForm: React.FC<CertificateFormProps> = ({ onCertificateGenerate
   };
 
   return (
-    <Paper elevation={3} sx={{ p: 4, maxWidth: 600, mx: 'auto', mt: 4 }}>
-      <Typography variant="h4" gutterBottom align="center">
-        Generate Certificate
-      </Typography>
+    <Paper 
+      elevation={0} 
+      sx={{ 
+        p: 4, 
+        maxWidth: 600, 
+        mx: 'auto', 
+        mt: 4,
+        border: '1px solid #E0E0E0',
+        borderTop: '4px solid #FF6B35',
+        borderRadius: 2,
+        background: 'white',
+      }}
+    >
+      <Box sx={{ textAlign: 'center', mb: 3 }}>
+        <Box 
+          sx={{ 
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 60,
+            height: 60,
+            borderRadius: '50%',
+            backgroundColor: '#FFF5F2',
+            mb: 2
+          }}
+        >
+          <WorkspacePremiumIcon sx={{ fontSize: 32, color: '#FF6B35' }} />
+        </Box>
+        <Typography variant="h4" gutterBottom sx={{ fontWeight: 500 }}>
+          Generate Diploma
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          Create a professional diploma for program completion
+        </Typography>
+      </Box>
       
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
       {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
@@ -150,9 +183,18 @@ const CertificateForm: React.FC<CertificateFormProps> = ({ onCertificateGenerate
             variant="contained"
             size="large"
             disabled={loading}
-            sx={{ py: 1.5 }}
+            startIcon={!loading && <SendIcon />}
+            sx={{ 
+              py: 1.5,
+              fontSize: '1rem',
+              fontWeight: 500,
+              background: 'linear-gradient(135deg, #FF6B35 0%, #FF8F65 100%)',
+              '&:hover': {
+                background: 'linear-gradient(135deg, #E55100 0%, #FF6B35 100%)',
+              }
+            }}
           >
-            {loading ? <CircularProgress size={24} /> : 'Generate Certificate'}
+            {loading ? <CircularProgress size={24} color="inherit" /> : 'Generate Diploma'}
           </Button>
         </Stack>
       </Box>

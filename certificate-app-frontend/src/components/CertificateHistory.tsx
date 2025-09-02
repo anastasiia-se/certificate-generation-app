@@ -11,10 +11,12 @@ import {
   Chip,
   IconButton,
   Tooltip,
-  CircularProgress
+  CircularProgress,
+  Box
 } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import SchoolIcon from '@mui/icons-material/School';
 import { CertificateRecord } from '../types/Certificate';
 import { certificateAPI } from '../services/api';
 
@@ -49,7 +51,7 @@ const CertificateHistory: React.FC<CertificateHistoryProps> = ({ refreshTrigger 
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `certificate_${name}_${surname}.pdf`;
+      a.download = `diploma_${name}_${surname}.pdf`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -71,13 +73,47 @@ const CertificateHistory: React.FC<CertificateHistoryProps> = ({ refreshTrigger 
   };
 
   return (
-    <Paper elevation={3} sx={{ p: 3, mt: 4 }}>
+    <Paper 
+      elevation={0} 
+      sx={{ 
+        p: 3, 
+        mt: 4,
+        border: '1px solid #E0E0E0',
+        borderTop: '4px solid #4CAF50',
+        borderRadius: 2,
+        background: 'white',
+      }}
+    >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <Typography variant="h5" gutterBottom>
-          Certificate History
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Box 
+            sx={{ 
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 40,
+              height: 40,
+              borderRadius: '50%',
+              backgroundColor: '#F0FFF4',
+            }}
+          >
+            <SchoolIcon sx={{ fontSize: 24, color: '#4CAF50' }} />
+          </Box>
+          <Typography variant="h5" sx={{ fontWeight: 500, color: '#2C2C2C' }}>
+            Diploma History
+          </Typography>
+        </Box>
         <Tooltip title="Refresh">
-          <IconButton onClick={fetchCertificates} disabled={loading}>
+          <IconButton 
+            onClick={fetchCertificates} 
+            disabled={loading}
+            sx={{ 
+              color: '#FF6B35',
+              '&:hover': {
+                backgroundColor: '#FFF5F2',
+              }
+            }}
+          >
             <RefreshIcon />
           </IconButton>
         </Tooltip>
@@ -86,14 +122,14 @@ const CertificateHistory: React.FC<CertificateHistoryProps> = ({ refreshTrigger 
       <TableContainer>
         <Table>
           <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Recipient Email</TableCell>
-              <TableCell>Manager Email</TableCell>
-              <TableCell>Completion Date</TableCell>
-              <TableCell>Sent Date</TableCell>
-              <TableCell>Email Status</TableCell>
-              <TableCell align="center">Actions</TableCell>
+            <TableRow sx={{ backgroundColor: '#FAFAFA' }}>
+              <TableCell sx={{ fontWeight: 600, color: '#2C2C2C' }}>Name</TableCell>
+              <TableCell sx={{ fontWeight: 600, color: '#2C2C2C' }}>Recipient Email</TableCell>
+              <TableCell sx={{ fontWeight: 600, color: '#2C2C2C' }}>Manager Email</TableCell>
+              <TableCell sx={{ fontWeight: 600, color: '#2C2C2C' }}>Completion Date</TableCell>
+              <TableCell sx={{ fontWeight: 600, color: '#2C2C2C' }}>Sent Date</TableCell>
+              <TableCell sx={{ fontWeight: 600, color: '#2C2C2C' }}>Email Status</TableCell>
+              <TableCell align="center" sx={{ fontWeight: 600, color: '#2C2C2C' }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -108,9 +144,9 @@ const CertificateHistory: React.FC<CertificateHistoryProps> = ({ refreshTrigger 
               </TableRow>
             ) : certificates.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} align="center">
+                <TableCell colSpan={7} align="center" sx={{ py: 4 }}>
                   <Typography variant="body2" color="textSecondary">
-                    No certificates have been generated yet
+                    No diplomas have been generated yet
                   </Typography>
                 </TableCell>
               </TableRow>
