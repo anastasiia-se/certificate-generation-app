@@ -47,7 +47,7 @@ class EmailService {
         }
     }
 
-    async sendCertificateEmails(certificateData, pdfBuffer) {
+    async sendDiplomaEmails(certificateData, pdfBuffer) {
         if (!this.isConfigured) {
             console.log('Email service not configured, skipping email send');
             return { sent: false, reason: 'Email service not configured' };
@@ -63,7 +63,7 @@ class EmailService {
             // Convert PDF buffer to base64 for attachment
             const pdfBase64 = pdfBuffer ? pdfBuffer.toString('base64') : null;
             const attachments = pdfBase64 ? [{
-                filename: `certificate_${certificateData.name}_${certificateData.surname}.pdf`,
+                filename: `diploma_${certificateData.name}_${certificateData.surname}.pdf`,
                 content: pdfBase64
             }] : [];
 
@@ -72,7 +72,7 @@ class EmailService {
                 const recipientEmail = await this.resend.emails.send({
                     from: this.fromEmail,
                     to: certificateData.recipientEmail,
-                    subject: `Congratulations ${certificateData.name}! Your Certificate is Ready`,
+                    subject: `Congratulations ${certificateData.name}! Your Diploma is Ready`,
                     html: this.getRecipientEmailTemplate(certificateData),
                     attachments: attachments
                 });
@@ -89,7 +89,7 @@ class EmailService {
                 const managerEmail = await this.resend.emails.send({
                     from: this.fromEmail,
                     to: certificateData.managerEmail,
-                    subject: `Certificate Issued: ${certificateData.name} ${certificateData.surname}`,
+                    subject: `Diploma Issued: ${certificateData.name} ${certificateData.surname}`,
                     html: this.getManagerEmailTemplate(certificateData),
                     attachments: attachments
                 });
@@ -109,7 +109,7 @@ class EmailService {
             };
 
         } catch (error) {
-            console.error('Error sending certificate emails:', error);
+            console.error('Error sending diploma emails:', error);
             return {
                 sent: false,
                 error: error.message
@@ -125,39 +125,61 @@ class EmailService {
         });
 
         return `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-                    <h1 style="color: white; margin: 0;">🎉 Congratulations!</h1>
+            <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background: white;">
+                <!-- Swedbank Header with Oak Leaves -->
+                <div style="background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%); height: 60px; background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20" fill="rgba(255,255,255,0.1)"><path d="M10,5 Q15,0 20,5 Q25,10 20,15 Q15,20 10,15 Q5,10 10,5 M30,5 Q35,0 40,5 Q45,10 40,15 Q35,20 30,15 Q25,10 30,5 M50,5 Q55,0 60,5 Q65,10 60,15 Q55,20 50,15 Q45,10 50,5 M70,5 Q75,0 80,5 Q85,10 80,15 Q75,20 70,15 Q65,10 70,5"/></svg>'); background-size: cover; position: relative;">
                 </div>
                 
-                <div style="background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px;">
-                    <h2 style="color: #333;">Dear ${certificateData.name} ${certificateData.surname},</h2>
+                <!-- Swedbank Orange Header -->
+                <div style="background: #FF5F00; padding: 25px 30px; text-align: center; color: white;">
+                    <h1 style="margin: 0; font-size: 28px; font-weight: 600;">🎓 Congratulations!</h1>
+                    <p style="margin: 8px 0 0 0; font-size: 16px; opacity: 0.95;">Your Professional Training is Complete</p>
+                </div>
+                
+                <div style="background: #FAFAFA; padding: 30px; border-left: 4px solid #FF5F00;">
+                    <h2 style="color: #2C2C2C; margin: 0 0 20px 0; font-size: 22px; font-weight: 500;">
+                        Dear ${certificateData.name} ${certificateData.surname},
+                    </h2>
                     
-                    <p style="color: #666; line-height: 1.6;">
-                        We are pleased to inform you that your certificate has been successfully generated 
-                        for completing the GenAI Certificate Program on ${completionDate}.
+                    <p style="color: #666; line-height: 1.7; margin: 0 0 20px 0; font-size: 15px;">
+                        We are delighted to inform you that your <strong>diploma has been successfully generated</strong> 
+                        for completing the <strong>Gen AI Training for Technical Professionals</strong> program on ${completionDate}.
                     </p>
                     
-                    <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                        <p style="margin: 5px 0;"><strong>Certificate ID:</strong> ${certificateData.certificateId}</p>
-                        <p style="margin: 5px 0;"><strong>Issue Date:</strong> ${new Date().toLocaleDateString()}</p>
-                        <p style="margin: 5px 0;"><strong>Completion Date:</strong> ${completionDate}</p>
+                    <div style="background: white; padding: 25px; border-radius: 8px; margin: 25px 0; border: 1px solid #E0E0E0; border-left: 4px solid #FF5F00;">
+                        <h3 style="color: #FF5F00; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">Diploma Details</h3>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr><td style="padding: 8px 0; color: #666; font-weight: 500;">Diploma ID:</td><td style="padding: 8px 0; color: #2C2C2C; font-weight: 600;">${certificateData.certificateId}</td></tr>
+                            <tr><td style="padding: 8px 0; color: #666; font-weight: 500;">Issue Date:</td><td style="padding: 8px 0; color: #2C2C2C; font-weight: 600;">${new Date().toLocaleDateString()}</td></tr>
+                            <tr><td style="padding: 8px 0; color: #666; font-weight: 500;">Completion Date:</td><td style="padding: 8px 0; color: #2C2C2C; font-weight: 600;">${completionDate}</td></tr>
+                            <tr><td style="padding: 8px 0; color: #666; font-weight: 500;">Program:</td><td style="padding: 8px 0; color: #2C2C2C; font-weight: 600;">Gen AI Training for Technical Professionals</td></tr>
+                        </table>
                     </div>
                     
-                    <p style="color: #666; line-height: 1.6;">
-                        Your certificate is attached to this email as a PDF document. 
-                        Please keep it for your records.
+                    <p style="color: #666; line-height: 1.7; margin: 20px 0; font-size: 15px;">
+                        📎 Your <strong>professional diploma</strong> is attached to this email as a PDF document. 
+                        Please download and keep it for your records and future reference.
                     </p>
                     
-                    <p style="color: #666; line-height: 1.6;">
-                        If you have any questions, please don't hesitate to contact us.
+                    <div style="background: #FFF5F2; padding: 20px; border-radius: 8px; border-left: 4px solid #FF5F00; margin: 20px 0;">
+                        <p style="color: #CC4C00; line-height: 1.6; margin: 0; font-size: 14px;">
+                            <strong>🏆 Achievement Unlocked:</strong> You have successfully demonstrated expertise in developing 
+                            Generative AI applications within regulated environments, adhering to industry best practices.
+                        </p>
+                    </div>
+                    
+                    <p style="color: #666; line-height: 1.7; margin: 20px 0 0 0; font-size: 15px;">
+                        If you have any questions regarding your diploma or the program, please don't hesitate to contact our team.
                     </p>
-                    
-                    <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
-                    
-                    <p style="color: #999; font-size: 12px; text-align: center;">
-                        This is an automated message from the GenAI Certificate Program.<br>
-                        Please do not reply to this email.
+                </div>
+                
+                <!-- Swedbank Footer -->
+                <div style="background: #2C2C2C; padding: 20px 30px; text-align: center;">
+                    <div style="color: #FF5F00; font-size: 18px; font-weight: 600; margin-bottom: 8px;">Swedbank</div>
+                    <p style="color: #999; font-size: 12px; margin: 0; line-height: 1.5;">
+                        This is an automated message from the Gen AI Training for Technical Professionals program.<br>
+                        Professional Training Excellence • Regulated Environment Expertise<br>
+                        Generated on ${new Date().toLocaleString()}
                     </p>
                 </div>
             </div>
@@ -172,34 +194,56 @@ class EmailService {
         });
 
         return `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <div style="background: #1976d2; padding: 20px; text-align: center; border-radius: 10px 10px 0 0;">
-                    <h2 style="color: white; margin: 0;">Certificate Notification</h2>
+            <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background: white;">
+                <!-- Manager Header -->
+                <div style="background: #2C2C2C; padding: 25px 30px; text-align: center; color: white;">
+                    <h2 style="margin: 0; font-size: 24px; font-weight: 600;">📋 Diploma Notification</h2>
+                    <p style="margin: 8px 0 0 0; font-size: 14px; opacity: 0.9;">Professional Training Completion Alert</p>
                 </div>
                 
-                <div style="background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px;">
-                    <h3 style="color: #333;">Certificate Issued</h3>
+                <div style="background: #FAFAFA; padding: 30px; border-left: 4px solid #FF5F00;">
+                    <h3 style="color: #2C2C2C; margin: 0 0 20px 0; font-size: 20px; font-weight: 600;">
+                        Diploma Successfully Issued
+                    </h3>
                     
-                    <p style="color: #666; line-height: 1.6;">
-                        This is to notify you that a certificate has been issued to:
+                    <p style="color: #666; line-height: 1.7; margin: 0 0 20px 0; font-size: 15px;">
+                        This is to notify you that a <strong>professional diploma</strong> has been successfully issued to the following participant:
                     </p>
                     
-                    <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                        <p style="margin: 5px 0;"><strong>Recipient:</strong> ${certificateData.name} ${certificateData.surname}</p>
-                        <p style="margin: 5px 0;"><strong>Email:</strong> ${certificateData.recipientEmail}</p>
-                        <p style="margin: 5px 0;"><strong>Certificate ID:</strong> ${certificateData.certificateId}</p>
-                        <p style="margin: 5px 0;"><strong>Completion Date:</strong> ${completionDate}</p>
-                        <p style="margin: 5px 0;"><strong>Issue Date:</strong> ${new Date().toLocaleDateString()}</p>
+                    <div style="background: white; padding: 25px; border-radius: 8px; margin: 25px 0; border: 1px solid #E0E0E0; border-left: 4px solid #FF5F00;">
+                        <h4 style="color: #FF5F00; margin: 0 0 15px 0; font-size: 16px; font-weight: 600;">Participant Information</h4>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr><td style="padding: 8px 0; color: #666; font-weight: 500; width: 140px;">Recipient:</td><td style="padding: 8px 0; color: #2C2C2C; font-weight: 600;">${certificateData.name} ${certificateData.surname}</td></tr>
+                            <tr><td style="padding: 8px 0; color: #666; font-weight: 500;">Email:</td><td style="padding: 8px 0; color: #2C2C2C; font-weight: 600;">${certificateData.recipientEmail}</td></tr>
+                            <tr><td style="padding: 8px 0; color: #666; font-weight: 500;">Diploma ID:</td><td style="padding: 8px 0; color: #2C2C2C; font-weight: 600;">${certificateData.certificateId}</td></tr>
+                            <tr><td style="padding: 8px 0; color: #666; font-weight: 500;">Program:</td><td style="padding: 8px 0; color: #2C2C2C; font-weight: 600;">Gen AI Training for Technical Professionals</td></tr>
+                            <tr><td style="padding: 8px 0; color: #666; font-weight: 500;">Completion Date:</td><td style="padding: 8px 0; color: #2C2C2C; font-weight: 600;">${completionDate}</td></tr>
+                            <tr><td style="padding: 8px 0; color: #666; font-weight: 500;">Issue Date:</td><td style="padding: 8px 0; color: #2C2C2C; font-weight: 600;">${new Date().toLocaleDateString()}</td></tr>
+                        </table>
                     </div>
                     
-                    <p style="color: #666; line-height: 1.6;">
-                        A copy of the certificate is attached for your records.
+                    <div style="background: #FFF5F2; padding: 20px; border-radius: 8px; border-left: 4px solid #FF5F00; margin: 20px 0;">
+                        <p style="color: #CC4C00; line-height: 1.6; margin: 0; font-size: 14px;">
+                            <strong>✅ Program Completed:</strong> The participant has successfully demonstrated expertise in developing 
+                            Generative AI applications within regulated environments, meeting all Swedbank professional standards.
+                        </p>
+                    </div>
+                    
+                    <p style="color: #666; line-height: 1.7; margin: 20px 0; font-size: 15px;">
+                        📎 A copy of the <strong>professional diploma</strong> is attached to this email for your records and documentation.
                     </p>
                     
-                    <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
-                    
-                    <p style="color: #999; font-size: 12px; text-align: center;">
-                        This is an automated notification from the GenAI Certificate Program.<br>
+                    <p style="color: #666; line-height: 1.7; margin: 20px 0 0 0; font-size: 15px;">
+                        For any questions regarding this diploma or the training program, please contact our team.
+                    </p>
+                </div>
+                
+                <!-- Swedbank Footer -->
+                <div style="background: #2C2C2C; padding: 20px 30px; text-align: center;">
+                    <div style="color: #FF5F00; font-size: 18px; font-weight: 600; margin-bottom: 8px;">Swedbank</div>
+                    <p style="color: #999; font-size: 12px; margin: 0; line-height: 1.5;">
+                        Automated notification from Gen AI Training for Technical Professionals<br>
+                        Excellence in Professional Development • Regulated Environment Expertise<br>
                         Generated on ${new Date().toLocaleString()}
                     </p>
                 </div>
@@ -217,8 +261,8 @@ class EmailService {
             const result = await this.resend.emails.send({
                 from: this.fromEmail,
                 to: toEmail,
-                subject: 'Test Email - Certificate System',
-                html: '<p>This is a test email from the certificate generation system. If you received this, email integration is working correctly!</p>'
+                subject: 'Test Email - Diploma System',
+                html: '<p>This is a test email from the diploma generation system. If you received this, email integration is working correctly!</p>'
             });
 
             return { success: true, id: result.data?.id };

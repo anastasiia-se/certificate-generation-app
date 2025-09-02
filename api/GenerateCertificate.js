@@ -28,8 +28,8 @@ app.http('GenerateCertificate', {
                 };
             }
 
-            // Generate certificate ID
-            const certificateId = `cert_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            // Generate diploma ID
+            const certificateId = `diploma_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
             
             // Create certificate record
             const certificateRecord = {
@@ -41,10 +41,10 @@ app.http('GenerateCertificate', {
                 completionDate,
                 sentDate: new Date().toISOString(),
                 emailSent: true, // Simulated for now
-                certificatePath: `certificates/${certificateId}.pdf`
+                certificatePath: `diplomas/${certificateId}.pdf`
             };
 
-            // Generate PDF certificate
+            // Generate PDF diploma
             let pdfUrl = null;
             let pdfBuffer = null;
             try {
@@ -57,7 +57,7 @@ app.http('GenerateCertificate', {
                 
                 // Upload to Azure Blob Storage
                 pdfUrl = await blobStorage.uploadPDF(certificateId, pdfBuffer);
-                certificateRecord.certificatePath = pdfUrl || `certificates/${certificateId}.pdf`;
+                certificateRecord.certificatePath = pdfUrl || `diplomas/${certificateId}.pdf`;
                 
                 context.log('PDF generated and uploaded:', certificateId);
             } catch (pdfError) {
@@ -69,17 +69,17 @@ app.http('GenerateCertificate', {
             // Store in Azure Table Storage
             await tableStorage.addCertificate(certificateRecord);
 
-            // Send emails with the certificate
+            // Send emails with the diploma
             let emailResult = { sent: false };
             if (pdfBuffer) {
                 try {
-                    emailResult = await emailService.sendCertificateEmails(certificateRecord, pdfBuffer);
+                    emailResult = await emailService.sendDiplomaEmails(certificateRecord, pdfBuffer);
                     
                     if (emailResult.sent) {
                         // Update the record with actual email status
                         certificateRecord.emailSent = true;
                         await tableStorage.updateCertificate(certificateId, { emailSent: true });
-                        context.log('Emails sent successfully for certificate:', certificateId);
+                        context.log('Emails sent successfully for diploma:', certificateId);
                     } else {
                         context.log('Email sending failed:', emailResult.errors);
                     }
@@ -89,7 +89,7 @@ app.http('GenerateCertificate', {
                 }
             }
             
-            context.log('Certificate generated:', certificateId);
+            context.log('Diploma generated:', certificateId);
 
             return {
                 status: 200,
@@ -98,9 +98,9 @@ app.http('GenerateCertificate', {
                 },
                 body: JSON.stringify({
                     success: true,
-                    message: 'Certificate generated successfully',
+                    message: 'Diploma generated successfully',
                     certificateId,
-                    certificateUrl: `https://certificate-functions-app-77132.azurewebsites.net/api/certificates/${certificateId}`,
+                    certificateUrl: `https://certificate-functions-app-77132.azurewebsites.net/api/diplomas/${certificateId}`,
                     emailSent: emailResult.sent,
                     emailDetails: emailResult.sent ? {
                         recipientSent: emailResult.recipientSent,
@@ -110,7 +110,7 @@ app.http('GenerateCertificate', {
             };
 
         } catch (error) {
-            context.log.error('Error generating certificate:', error);
+            context.log.error('Error generating diploma:', error);
             context.log.error('Error stack:', error.stack);
             
             return {
