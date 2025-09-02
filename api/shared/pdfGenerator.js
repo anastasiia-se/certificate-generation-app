@@ -29,8 +29,8 @@ function generateCertificatePDF(certificateData) {
             const lightText = '#666666';
             const centerX = pageWidth / 2;
             
-            // Green oak leaves frame - 2cm (approximately 57 points) thick border
-            const frameWidth = 57; // 2cm in points
+            // Green oak leaves frame - 1.5cm (approximately 43 points) thick border
+            const frameWidth = 43; // 1.5cm in points
             try {
                 const bgImagePath = path.join(__dirname, 'oak-leaves-bg.jpg');
                 if (fs.existsSync(bgImagePath)) {
@@ -115,13 +115,13 @@ function generateCertificatePDF(certificateData) {
             }
             
             // DIPLOMA - elegant title
-            doc.font('Helvetica-Bold')
-               .fontSize(68)
+            doc.font('Helvetica')
+               .fontSize(52)
                .fillColor(darkText)
                .text('DIPLOMA', frameWidth, contentTop + 70, { 
                    align: 'center',
                    width: pageWidth - frameWidth * 2,
-                   characterSpacing: 4
+                   characterSpacing: 5
                });
             
             // Decorative line under title
@@ -177,14 +177,7 @@ function generateCertificatePDF(certificateData) {
             doc.font('Helvetica-Bold')
                .fontSize(20)
                .fillColor(orangeColor)
-               .text('Generative AI Training Program', frameWidth, contentTop + 285, {
-                   align: 'center',
-                   width: pageWidth - frameWidth * 2
-               })
-               .font('Helvetica-Bold')
-               .fontSize(17)
-               .fillColor(darkText)
-               .text('for Technical Professionals', frameWidth, contentTop + 310, {
+               .text('Gen AI Training for Technical Professionals', frameWidth, contentTop + 285, {
                    align: 'center',
                    width: pageWidth - frameWidth * 2
                });
@@ -193,15 +186,15 @@ function generateCertificatePDF(certificateData) {
             doc.font('Helvetica')
                .fontSize(11)
                .fillColor(lightText)
-               .text('This program demonstrates expertise in developing AI applications within', frameWidth, contentTop + 340, {
+               .text('This program demonstrates expertise in developing AI applications within', frameWidth, contentTop + 320, {
                    align: 'center',
                    width: pageWidth - frameWidth * 2
                })
-               .text('regulated environments, adherence to industry best practices, and', frameWidth, contentTop + 355, {
+               .text('regulated environments, adherence to industry best practices, and', frameWidth, contentTop + 335, {
                    align: 'center',
                    width: pageWidth - frameWidth * 2
                })
-               .text('alignment with Swedbank\'s professional standards and guidelines.', frameWidth, contentTop + 370, {
+               .text('alignment with Swedbank\'s professional standards and guidelines.', frameWidth, contentTop + 350, {
                    align: 'center',
                    width: pageWidth - frameWidth * 2
                });
@@ -213,7 +206,7 @@ function generateCertificatePDF(certificateData) {
                 day: 'numeric' 
             });
             
-            const dateY = contentTop + 400;
+            const dateY = contentTop + 380;
             
             // Simple date without overlapping decorative lines
             doc.font('Helvetica')
