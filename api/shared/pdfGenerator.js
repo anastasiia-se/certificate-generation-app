@@ -169,7 +169,7 @@ function generateCertificatePDF(certificateData) {
             doc.font('Helvetica')
                .fontSize(15)
                .fillColor(darkText)
-               .text('for successful completion of the comprehensive', frameWidth, contentTop + 260, {
+               .text('for successfully completing the comprehensive', frameWidth, contentTop + 260, {
                    align: 'center',
                    width: pageWidth - frameWidth * 2
                });
@@ -212,7 +212,7 @@ function generateCertificatePDF(certificateData) {
             doc.font('Helvetica')
                .fontSize(13)
                .fillColor(darkText)
-               .text(`Completed on ${dateText}`, frameWidth, dateY, {
+               .text(`Issued on ${dateText}`, frameWidth, dateY, {
                    align: 'center',
                    width: pageWidth - frameWidth * 2
                });
