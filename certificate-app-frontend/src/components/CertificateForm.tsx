@@ -137,13 +137,14 @@ const CertificateForm: React.FC<CertificateFormProps> = ({ onCertificateGenerate
 
           <TextField
             fullWidth
-            label="Completion Date"
+            label="Diploma Issued"
             name="completionDate"
             type="date"
             value={formData.completionDate}
             onChange={handleChange}
             required
             variant="outlined"
+            helperText="Date when the diploma is being generated (defaults to today)"
             InputLabelProps={{
               shrink: true,
             }}

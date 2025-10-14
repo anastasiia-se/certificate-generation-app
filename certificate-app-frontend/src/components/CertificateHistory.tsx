@@ -164,7 +164,7 @@ const CertificateHistory: React.FC<CertificateHistoryProps> = ({ refreshTrigger 
             <TableRow sx={{ backgroundColor: '#FAFAFA' }}>
               <TableCell sx={{ fontWeight: 600, color: '#2C2C2C' }}>Name</TableCell>
               <TableCell sx={{ fontWeight: 600, color: '#2C2C2C' }}>Surname</TableCell>
-              <TableCell sx={{ fontWeight: 600, color: '#2C2C2C' }}>Completion Date</TableCell>
+              <TableCell sx={{ fontWeight: 600, color: '#2C2C2C' }}>Diploma Issued</TableCell>
               <TableCell align="center" sx={{ fontWeight: 600, color: '#2C2C2C' }}>Actions</TableCell>
             </TableRow>
           </TableHead>

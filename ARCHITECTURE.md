@@ -22,7 +22,8 @@ This document outlines the complete architecture of the Gen AI Training for Tech
 │  ┌─────────────────────────────────────────────────────────┐   │
 │  │                React Frontend (SPA)                      │   │
 │  │  - Login Authentication                                  │   │
-│  │  - Diploma Generation Form                               │   │
+│  │  - Single Diploma Generation Form                        │   │
+│  │  - Batch CSV Upload (Multiple Diplomas)                  │   │
 │  │  - Diploma History Table                                 │   │
 │  │  - PDF Download & Delete Functions                       │   │
 │  └─────────────────────────────────────────────────────────┘   │
@@ -44,12 +45,14 @@ This document outlines the complete architecture of the Gen AI Training for Tech
          ▼                  ▼                  ▼
 ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
 │  Azure Table    │ │   Azure Blob    │ │   Resend API    │
-│    Storage      │ │    Storage      │ │  (Email Service)│
+│    Storage      │ │    Storage      │ │  (Not Active)   │
 │                 │ │                 │ │                 │
-│ Table:          │ │ Container:      │ │ Emails sent to: │
-│ certificates    │ │ certificates    │ │ - Recipients    │
-│                 │ │                 │ │ - Managers      │
+│ Table:          │ │ Container:      │ │ Email sending   │
+│ certificates    │ │ certificates    │ │ disabled in     │
+│                 │ │                 │ │ current branch  │
 └─────────────────┘ └─────────────────┘ └─────────────────┘
+
+Note: Email functionality available in 'enabled-sending-diplomas' branch
 ```
 
 ---
@@ -61,6 +64,7 @@ This document outlines the complete architecture of the Gen AI Training for Tech
 - **UI Library**: Material-UI (MUI) v5
 - **State Management**: React Hooks (useState, useEffect)
 - **HTTP Client**: Axios
+- **CSV Parsing**: PapaParse
 - **Build Tool**: Create React App
 - **Hosting**: Azure Static Web Apps (Standard tier)
 
@@ -76,6 +80,46 @@ This document outlines the complete architecture of the Gen AI Training for Tech
 - **Region**: Currently in personal region (needs migration)
 - **Authentication**: Frontend-only password protection
 - **CI/CD**: GitHub Actions
+
+---
+
+## 🎯 Current Features (disabled-sending-diplomas branch)
+
+### Diploma Generation
+- **Single Diploma Mode**: Manual form entry for individual diplomas
+  - Name, Surname input fields
+  - "Diploma Issued" date (defaults to today, can be changed)
+  - Automatic generation of unique diploma IDs
+
+- **Batch Mode**: CSV upload for multiple diplomas
+  - Simple CSV format: `Name,Surname`
+  - Auto-fills "Diploma Issued" date to today
+  - Preview table before generation
+  - Progress bar during batch processing
+  - Individual success/failure status per diploma
+
+### Data Management
+- **Diploma History Table**: Displays all generated diplomas
+  - Columns: Name, Surname, Diploma Issued, Actions
+  - Download individual PDFs
+  - Delete diplomas with confirmation dialog
+  - Real-time refresh after generation
+
+### User Experience
+- **Password Protection**: Simple frontend authentication
+  - Password: GenAITraining2025
+  - Session stored in localStorage
+  - Logout functionality
+
+- **Responsive Design**: Swedbank-branded UI
+  - Clean, professional appearance
+  - Orange accent color (#FF5F00)
+  - Material-UI components
+
+### Branch Strategy
+- **main**: Production branch (currently disabled-sending-diplomas)
+- **disabled-sending-diplomas**: Current working branch (no email functionality)
+- **enabled-sending-diplomas**: Future branch with email sending capability
 
 ---
 

@@ -1,64 +1,98 @@
 # Certificate Generation App - Project Status
 
-**Last Updated:** August 31, 2025  
-**Current Version:** Production Ready (Core Features)
+**Last Updated:** January 2025
+**Current Version:** Production Ready v2.0 (Batch Upload Enabled)
+**Active Branch:** disabled-sending-diplomas (main)
 
 ## 🎯 **Current Status: WORKING PRODUCTION APP**
 
 ### ✅ **Fully Implemented & Working:**
 
-1. **Certificate Generation**
+1. **Single Certificate Generation**
    - PDF generation using PDFKit library
    - Unique certificate IDs with timestamp
    - Professional certificate design with name, date, and ID
    - Form validation and error handling
+   - "Diploma Issued" date field (defaults to today)
 
-2. **Azure Blob Storage Integration** 
+2. **Batch Certificate Generation** (NEW ✨)
+   - CSV file upload functionality
+   - Simple format: Name, Surname (no date needed)
+   - Automatic date assignment to today
+   - Preview table before generation
+   - Progress bar during batch processing
+   - Success/failure tracking per diploma
+   - Can handle multiple diplomas in one upload
+
+3. **Azure Blob Storage Integration**
    - PDFs stored permanently in `certappstorage2025` storage account
    - Container: `certificates`
    - Download functionality working properly
    - Connection string configured: `AZURE_STORAGE_CONNECTION_STRING`
 
-3. **Azure Table Storage - Persistent Data**
+4. **Azure Table Storage - Persistent Data**
    - All certificate metadata stored in `certificates` table
    - Data survives Function App restarts ✅
    - Fallback to in-memory if connection fails
    - Sorted by newest first
 
-4. **Production Deployment**
+5. **Production Deployment**
    - **Frontend**: https://proud-beach-08943ae0f.1.azurestaticapps.net (Standard tier)
    - **Backend**: https://certificate-functions-app-77132.azurewebsites.net
    - **CI/CD**: GitHub Actions auto-deployment working
    - **CORS**: Properly configured
 
-5. **User Experience**
+6. **User Experience**
+   - Login authentication with password protection
    - Loading spinner for certificate history
    - Form clears after successful submission
-   - Download buttons for PDFs
+   - Download buttons for individual PDFs
+   - Delete functionality with confirmation dialog
    - Error handling and user feedback
+   - Progress indicators for batch operations
+
+7. **Diploma History Table** (UPDATED ✨)
+   - Simplified columns: Name, Surname, Diploma Issued, Actions
+   - Removed email-related columns (not needed in this branch)
+   - Individual download per diploma
+   - Delete with confirmation
+   - Real-time refresh after generation
 
 ---
 
-## 🚧 **Next Priority: EMAIL INTEGRATION**
+## 🔀 **Branch Strategy**
 
-### **What's Needed:**
-1. **SendGrid Account Setup** (User Action Required)
-   - Sign up at https://sendgrid.com/
-   - Get API key with Full Access permissions
-   - Verify sender email address
-   - Add API key to Azure Function App settings
+### **Current Setup:**
+- **main** - Production branch (currently mirrors disabled-sending-diplomas)
+- **disabled-sending-diplomas** - Active development (no email functionality)
+- **enabled-sending-diplomas** - Alternative branch (includes email sending)
 
-2. **Implementation Tasks:**
-   - Install `@sendgrid/mail` package
-   - Create email service in `/api/shared/emailService.js`
-   - Create email templates (HTML/text)
-   - Integrate into certificate generation flow
-   - Update frontend to show email status
+### **Workflow:**
+1. Work on disabled-sending-diplomas for features that don't need email
+2. Merge to main for production deployment
+3. Keep enabled-sending-diplomas available for future use if email is needed
 
-### **Email Flow Design:**
-- **Recipient Email**: PDF certificate attached + congratulations message
-- **Manager Email**: Notification that certificate was issued + PDF attached
-- **Both emails**: Professional templates with company branding
+---
+
+## 🚧 **Optional: EMAIL INTEGRATION**
+
+**Note:** Email functionality is available in the `enabled-sending-diplomas` branch.
+If you need to enable email sending, switch to that branch.
+
+### **What's Needed (if enabling email):**
+1. **Email Service Configuration**
+   - Configure Resend API or alternative email service
+   - Set up custom domain for sending
+   - Verify domain with DNS records
+
+2. **Environment Variables:**
+   - `RESEND_API_KEY` or `SENDGRID_API_KEY`
+   - `SENDER_EMAIL` (custom Swedbank email)
+
+### **Current Approach:**
+- Diplomas are generated and saved without email sending
+- Users can download PDFs manually
+- Simpler workflow, no email deliverability concerns
 
 ---
 
@@ -87,9 +121,11 @@
    - Export functionality (CSV, Excel)
    - Date range filtering
 
-3. **Batch Processing**
-   - Upload CSV for bulk certificate generation
-   - Progress tracking for large batches
+3. ✅ **Batch Processing** (COMPLETED)
+   - ✅ Upload CSV for bulk certificate generation
+   - ✅ Progress tracking for large batches
+   - ✅ Preview before generation
+   - ✅ Individual status tracking
 
 ### **Phase 3: Enterprise Features**
 1. **API Integration**
@@ -107,8 +143,9 @@
 ## 🛠 **Technical Architecture**
 
 ### **Current Stack:**
-- **Frontend**: React 19 + TypeScript + Material-UI
-- **Backend**: Azure Functions (Node.js 20)
+- **Frontend**: React 18 + TypeScript + Material-UI
+- **CSV Processing**: PapaParse library
+- **Backend**: Azure Functions (Node.js 18)
 - **Storage**: Azure Blob Storage + Azure Table Storage
 - **Deployment**: GitHub Actions + Azure Static Web Apps (Standard)
 - **PDF Generation**: PDFKit library
@@ -125,8 +162,8 @@ Resource Group: certificate-app-rg
 
 ### **Environment Variables (Set in Function App):**
 - `AZURE_STORAGE_CONNECTION_STRING` ✅ (Set)
-- `SENDGRID_API_KEY` ❌ (Needed)
-- `SENDER_EMAIL` ❌ (Needed)
+- `RESEND_API_KEY` ⚠️ (Only needed for enabled-sending-diplomas branch)
+- `SENDER_EMAIL` ⚠️ (Only needed for enabled-sending-diplomas branch)
 
 ---
 
@@ -194,9 +231,16 @@ az functionapp restart --name certificate-functions-app-77132 --resource-group c
 - ✅ Full-stack application deployed to production
 - ✅ PDF generation and permanent storage working
 - ✅ Data persistence across restarts
-- ✅ Professional user interface
+- ✅ Professional user interface with Swedbank branding
 - ✅ Automated CI/CD pipeline
 - ✅ CORS and security configured
 - ✅ Error handling and user feedback
+- ✅ **Batch CSV upload for multiple diplomas** (NEW!)
+- ✅ Simplified diploma history table
+- ✅ Delete functionality with confirmation
+- ✅ Password-based authentication
+- ✅ Branch strategy for email/no-email versions
 
-**The app is now ready for real-world use!** The only missing piece for full production is email functionality.
+**The app is fully functional and ready for production use!**
+- Current version: Generate and save diplomas (no email sending)
+- Alternative version: Available in enabled-sending-diplomas branch (includes email)

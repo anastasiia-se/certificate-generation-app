@@ -1,9 +1,13 @@
 # Migration Requirements - Priority Checklist
 
+**Current Branch**: disabled-sending-diplomas (email functionality disabled)
+**Alternative Branch**: enabled-sending-diplomas (includes email functionality)
+
 ## 🔴 CRITICAL - Must Fix Before Production
 
-### 1. Email Domain Configuration
+### 1. Email Domain Configuration (Only if using enabled-sending-diplomas branch)
 **Current Issue**: Using `onboarding@resend.dev` (default test domain)
+**Note**: Not applicable to disabled-sending-diplomas branch
 
 **Required Actions**:
 ```bash
@@ -120,7 +124,7 @@ Data Retention:
 ## 🟢 NICE TO HAVE - Can Implement Later
 
 ### 7. Advanced Features
-- **Bulk diploma generation** from CSV
+- ✅ **Bulk diploma generation** from CSV (COMPLETED)
 - **Template management** for different programs
 - **Analytics dashboard** in Power BI
 - **Teams integration** for notifications

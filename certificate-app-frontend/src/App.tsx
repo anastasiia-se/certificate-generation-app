@@ -4,6 +4,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { Container, Box } from '@mui/material';
 import Header from './components/Header';
 import CertificateForm from './components/CertificateForm';
+import BatchCertificateUpload from './components/BatchCertificateUpload';
 import CertificateHistory from './components/CertificateHistory';
 import Login from './components/Login';
 
@@ -161,6 +162,7 @@ function App() {
         <Header onLogout={handleLogout} />
         <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, pb: 6 }}>
           <CertificateForm onCertificateGenerated={handleCertificateGenerated} />
+          <BatchCertificateUpload onBatchComplete={handleCertificateGenerated} />
           <CertificateHistory refreshTrigger={refreshTrigger} />
         </Container>
       </Box>
