@@ -7,7 +7,12 @@ import {
   Typography,
   Alert,
   CircularProgress,
-  Stack
+  Stack,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions
 } from '@mui/material';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import SaveIcon from '@mui/icons-material/Save';
@@ -30,6 +35,8 @@ const CertificateForm: React.FC<CertificateFormProps> = ({ onCertificateGenerate
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [duplicateDialogOpen, setDuplicateDialogOpen] = useState(false);
+  const [duplicateCount, setDuplicateCount] = useState(0);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -41,6 +48,26 @@ const CertificateForm: React.FC<CertificateFormProps> = ({ onCertificateGenerate
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+    setSuccess(null);
+
+    // Check for duplicates first
+    try {
+      const duplicates = await certificateAPI.checkDuplicate(formData.name, formData.surname);
+      if (duplicates.length > 0) {
+        setDuplicateCount(duplicates.length);
+        setDuplicateDialogOpen(true);
+        return;
+      }
+    } catch (err) {
+      console.error('Error checking duplicates:', err);
+    }
+
+    // No duplicates, proceed with generation
+    await generateDiploma();
+  };
+
+  const generateDiploma = async () => {
     setLoading(true);
     setError(null);
     setSuccess(null);
@@ -71,6 +98,15 @@ const CertificateForm: React.FC<CertificateFormProps> = ({ onCertificateGenerate
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleConfirmDuplicate = async () => {
+    setDuplicateDialogOpen(false);
+    await generateDiploma();
+  };
+
+  const handleCancelDuplicate = () => {
+    setDuplicateDialogOpen(false);
   };
 
   return (
@@ -171,6 +207,51 @@ const CertificateForm: React.FC<CertificateFormProps> = ({ onCertificateGenerate
           </Button>
         </Stack>
       </Box>
+
+      {/* Duplicate Warning Dialog */}
+      <Dialog
+        open={duplicateDialogOpen}
+        onClose={handleCancelDuplicate}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle sx={{ color: '#FF5F00', fontWeight: 600 }}>
+          Duplicate Diploma Detected
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            A diploma for <strong>{formData.name} {formData.surname}</strong> already exists.
+          </DialogContentText>
+          <DialogContentText sx={{ mt: 2 }}>
+            {duplicateCount === 1
+              ? 'There is 1 existing diploma for this person.'
+              : `There are ${duplicateCount} existing diplomas for this person.`}
+          </DialogContentText>
+          <DialogContentText sx={{ mt: 2, fontWeight: 500 }}>
+            Do you want to generate another diploma for the same person?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleCancelDuplicate}
+            sx={{ color: '#666' }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleConfirmDuplicate}
+            variant="contained"
+            sx={{
+              backgroundColor: '#FF5F00',
+              '&:hover': {
+                backgroundColor: '#CC4C00',
+              }
+            }}
+          >
+            Generate Anyway
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Paper>
   );
 };

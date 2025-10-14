@@ -44,5 +44,18 @@ export const certificateAPI = {
       console.error('Error deleting diploma:', error);
       throw error;
     }
+  },
+
+  checkDuplicate: async (name: string, surname: string): Promise<CertificateRecord[]> => {
+    try {
+      const history = await certificateAPI.getCertificateHistory();
+      return history.filter(cert =>
+        cert.name.toLowerCase() === name.toLowerCase() &&
+        cert.surname.toLowerCase() === surname.toLowerCase()
+      );
+    } catch (error) {
+      console.error('Error checking for duplicates:', error);
+      return [];
+    }
   }
 };

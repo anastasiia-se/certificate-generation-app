@@ -29,8 +29,9 @@ interface DiplomaEntry {
   name: string;
   surname: string;
   completionDate: string;
-  status?: 'pending' | 'success' | 'error';
+  status?: 'pending' | 'success' | 'error' | 'duplicate';
   error?: string;
+  duplicateCount?: number;
 }
 
 interface BatchCertificateUploadProps {
@@ -54,7 +55,7 @@ const BatchCertificateUpload: React.FC<BatchCertificateUploadProps> = ({ onBatch
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,
-      complete: (results) => {
+      complete: async (results) => {
         try {
           const parsedDiplomas: DiplomaEntry[] = results.data.map((row: any) => {
             const csvRow = row as CsvRow;
@@ -76,7 +77,26 @@ const BatchCertificateUpload: React.FC<BatchCertificateUploadProps> = ({ onBatch
             return;
           }
 
-          setDiplomas(parsedDiplomas);
+          // Check for duplicates for each entry
+          const diplomasWithDuplicateCheck = await Promise.all(
+            parsedDiplomas.map(async (diploma) => {
+              try {
+                const duplicates = await certificateAPI.checkDuplicate(diploma.name, diploma.surname);
+                if (duplicates.length > 0) {
+                  return {
+                    ...diploma,
+                    status: 'duplicate' as const,
+                    duplicateCount: duplicates.length
+                  };
+                }
+                return diploma;
+              } catch (err) {
+                return diploma;
+              }
+            })
+          );
+
+          setDiplomas(diplomasWithDuplicateCheck);
         } catch (err: any) {
           setError(err.message || 'Failed to parse CSV file');
         }
@@ -95,16 +115,33 @@ const BatchCertificateUpload: React.FC<BatchCertificateUploadProps> = ({ onBatch
   };
 
   const handleGenerateAll = async () => {
+    // Check if there are any duplicates
+    const hasDuplicates = diplomas.some(d => d.status === 'duplicate');
+
+    if (hasDuplicates) {
+      const confirmGenerate = window.confirm(
+        'Some entries are duplicates. Do you want to generate diplomas for ALL entries including duplicates?\n\n' +
+        'Click OK to generate all (including duplicates)\n' +
+        'Click Cancel to remove duplicates before generating'
+      );
+
+      if (!confirmGenerate) {
+        return;
+      }
+    }
+
     setProcessing(true);
     setProgress(0);
     setSummary(null);
 
     let successful = 0;
     let failed = 0;
+    let skipped = 0;
 
     for (let i = 0; i < diplomas.length; i++) {
+      const diploma = diplomas[i];
+
       try {
-        const diploma = diplomas[i];
         await certificateAPI.generateCertificate({
           name: diploma.name,
           surname: diploma.surname,
@@ -234,6 +271,12 @@ const BatchCertificateUpload: React.FC<BatchCertificateUploadProps> = ({ onBatch
         </Box>
       ) : (
         <Box>
+          {diplomas.some(d => d.status === 'duplicate') && (
+            <Alert severity="warning" sx={{ mb: 2 }}>
+              Some entries are duplicates of existing diplomas. You can remove them individually or generate anyway when you click "Generate All".
+            </Alert>
+          )}
+
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
             <Typography variant="h6">
               Preview ({diplomas.length} diploma{diplomas.length !== 1 ? 's' : ''})
@@ -271,11 +314,17 @@ const BatchCertificateUpload: React.FC<BatchCertificateUploadProps> = ({ onBatch
                       {diploma.status === 'error' && (
                         <Chip label="Failed" color="error" size="small" />
                       )}
+                      {diploma.status === 'duplicate' && (
+                        <Chip
+                          label={`Duplicate (${diploma.duplicateCount} existing)`}
+                          color="warning"
+                          size="small"
+                        />
+                      )}
                       {diploma.status === 'pending' && (
                         <Chip label="Pending" size="small" />
                       )}
-                    </TableCell>
-                    <TableCell align="center">
+                    </TableCell>                    <TableCell align="center">
                       <IconButton
                         size="small"
                         onClick={() => handleRemoveDiploma(index)}
