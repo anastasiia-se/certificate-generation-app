@@ -8,7 +8,6 @@ import {
   TableHead,
   TableRow,
   Typography,
-  Chip,
   IconButton,
   Tooltip,
   CircularProgress,
@@ -124,7 +123,7 @@ const CertificateHistory: React.FC<CertificateHistoryProps> = ({ refreshTrigger 
         background: 'white',
       }}
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <Box 
             sx={{ 
@@ -157,25 +156,22 @@ const CertificateHistory: React.FC<CertificateHistoryProps> = ({ refreshTrigger 
             <RefreshIcon />
           </IconButton>
         </Tooltip>
-      </div>
+      </Box>
 
       <TableContainer>
         <Table>
           <TableHead>
             <TableRow sx={{ backgroundColor: '#FAFAFA' }}>
               <TableCell sx={{ fontWeight: 600, color: '#2C2C2C' }}>Name</TableCell>
-              <TableCell sx={{ fontWeight: 600, color: '#2C2C2C' }}>Recipient Email</TableCell>
-              <TableCell sx={{ fontWeight: 600, color: '#2C2C2C' }}>Manager Email</TableCell>
+              <TableCell sx={{ fontWeight: 600, color: '#2C2C2C' }}>Surname</TableCell>
               <TableCell sx={{ fontWeight: 600, color: '#2C2C2C' }}>Completion Date</TableCell>
-              <TableCell sx={{ fontWeight: 600, color: '#2C2C2C' }}>Sent Date</TableCell>
-              <TableCell sx={{ fontWeight: 600, color: '#2C2C2C' }}>Email Status</TableCell>
               <TableCell align="center" sx={{ fontWeight: 600, color: '#2C2C2C' }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={7} align="center" sx={{ py: 4 }}>
+                <TableCell colSpan={4} align="center" sx={{ py: 4 }}>
                   <CircularProgress size={30} />
                   <Typography variant="body2" color="textSecondary" sx={{ mt: 2 }}>
                     Loading diplomas...
@@ -184,7 +180,7 @@ const CertificateHistory: React.FC<CertificateHistoryProps> = ({ refreshTrigger 
               </TableRow>
             ) : certificates.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} align="center" sx={{ py: 4 }}>
+                <TableCell colSpan={4} align="center" sx={{ py: 4 }}>
                   <Typography variant="body2" color="textSecondary">
                     No diplomas have been generated yet
                   </Typography>
@@ -193,18 +189,9 @@ const CertificateHistory: React.FC<CertificateHistoryProps> = ({ refreshTrigger 
             ) : (
               certificates.map((cert) => (
                 <TableRow key={cert.certificateId}>
-                  <TableCell>{`${cert.name} ${cert.surname}`}</TableCell>
-                  <TableCell>{cert.recipientEmail}</TableCell>
-                  <TableCell>{cert.managerEmail}</TableCell>
+                  <TableCell>{cert.name}</TableCell>
+                  <TableCell>{cert.surname}</TableCell>
                   <TableCell>{formatDate(cert.completionDate)}</TableCell>
-                  <TableCell>{formatDate(cert.sentDate)}</TableCell>
-                  <TableCell>
-                    <Chip
-                      label={cert.emailSent ? 'Sent' : 'Pending'}
-                      color={cert.emailSent ? 'success' : 'warning'}
-                      size="small"
-                    />
-                  </TableCell>
                   <TableCell align="center">
                     <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1 }}>
                       <Tooltip title="Download Diploma">
@@ -220,7 +207,7 @@ const CertificateHistory: React.FC<CertificateHistoryProps> = ({ refreshTrigger 
                         <IconButton
                           onClick={() => handleDeleteClick(cert)}
                           size="small"
-                          sx={{ 
+                          sx={{
                             color: '#DC3545',
                             '&:hover': {
                               backgroundColor: '#FFF5F5',
