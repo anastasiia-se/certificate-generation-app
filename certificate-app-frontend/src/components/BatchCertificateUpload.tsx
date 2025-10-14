@@ -136,7 +136,6 @@ const BatchCertificateUpload: React.FC<BatchCertificateUploadProps> = ({ onBatch
 
     let successful = 0;
     let failed = 0;
-    let skipped = 0;
 
     for (let i = 0; i < diplomas.length; i++) {
       const diploma = diplomas[i];
