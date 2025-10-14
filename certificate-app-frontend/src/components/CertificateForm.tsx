@@ -10,7 +10,7 @@ import {
   Stack
 } from '@mui/material';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
-import SendIcon from '@mui/icons-material/Send';
+import SaveIcon from '@mui/icons-material/Save';
 import { CertificateData } from '../types/Certificate';
 import { certificateAPI } from '../services/api';
 
@@ -22,8 +22,8 @@ const CertificateForm: React.FC<CertificateFormProps> = ({ onCertificateGenerate
   const [formData, setFormData] = useState<CertificateData>({
     name: '',
     surname: '',
-    recipientEmail: '',
-    managerEmail: '',
+    recipientEmail: 'no-email@example.com',
+    managerEmail: 'no-email@example.com',
     completionDate: new Date().toISOString().split('T')[0]
   });
 
@@ -48,25 +48,19 @@ const CertificateForm: React.FC<CertificateFormProps> = ({ onCertificateGenerate
     try {
       const response = await certificateAPI.generateCertificate(formData);
       if (response.success) {
-        let successMessage = `Diploma generated successfully! Diploma ID: ${response.certificateId}`;
-        if (response.emailSent) {
-          successMessage += ' - Emails have been sent to recipients';
-        }
-        setSuccess(successMessage);
-        // Don't try to open certificate URL until PDF generation is implemented
-        // if (response.certificateUrl) {
-        //   window.open(response.certificateUrl, '_blank');
-        // }
+        setSuccess(`Diploma generated and saved successfully! Diploma ID: ${response.certificateId}`);
+
         // Trigger refresh of certificate history
         if (onCertificateGenerated) {
           onCertificateGenerated();
         }
+
         // Clear form after successful submission
         setFormData({
           name: '',
           surname: '',
-          recipientEmail: '',
-          managerEmail: '',
+          recipientEmail: 'no-email@example.com',
+          managerEmail: 'no-email@example.com',
           completionDate: new Date().toISOString().split('T')[0]
         });
       } else {
@@ -140,29 +134,7 @@ const CertificateForm: React.FC<CertificateFormProps> = ({ onCertificateGenerate
             required
             variant="outlined"
           />
-          
-          <TextField
-            fullWidth
-            label="Recipient Email"
-            name="recipientEmail"
-            type="email"
-            value={formData.recipientEmail}
-            onChange={handleChange}
-            required
-            variant="outlined"
-          />
-          
-          <TextField
-            fullWidth
-            label="Manager Email"
-            name="managerEmail"
-            type="email"
-            value={formData.managerEmail}
-            onChange={handleChange}
-            required
-            variant="outlined"
-          />
-          
+
           <TextField
             fullWidth
             label="Completion Date"
@@ -183,8 +155,8 @@ const CertificateForm: React.FC<CertificateFormProps> = ({ onCertificateGenerate
             variant="contained"
             size="large"
             disabled={loading}
-            startIcon={!loading && <SendIcon />}
-            sx={{ 
+            startIcon={!loading && <SaveIcon />}
+            sx={{
               py: 1.5,
               fontSize: '1rem',
               fontWeight: 500,
@@ -194,7 +166,7 @@ const CertificateForm: React.FC<CertificateFormProps> = ({ onCertificateGenerate
               }
             }}
           >
-            {loading ? <CircularProgress size={24} color="inherit" /> : 'Generate Diploma'}
+            {loading ? <CircularProgress size={24} color="inherit" /> : 'Generate & Save Diploma'}
           </Button>
         </Stack>
       </Box>
